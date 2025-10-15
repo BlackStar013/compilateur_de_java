@@ -1,1 +1,71 @@
-print("bonjour")
+from re import * #marche pas en tout cas pour l'instant car read lit des str
+
+chiffres = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+alpha_min = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+alpha_maj = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+symbole = ["+", "-", "*", "/", "%", "=", "||", "&&", "!=", "<", "<=", ">=", ">", "."]
+
+
+def lexeur():
+    file = open("texte_source.txt", "r")
+    ch = ""
+    L = []
+    ch = file.read(1)
+    while 1:
+        print(ch)
+        if(ch == ""):
+            break
+        elif(ch in chiffres):
+            multi = 1
+            nb = [ch]
+            while(1):
+                ch = file.read(1)
+                if(ch in chiffres):
+                    multi = multi * 10
+                    nb.append(ch)
+                else:
+                    nombre = 0
+                    for i in range(len(nb)):
+                        nombre += multi * int(nb[i])
+                        multi = multi/10 
+                    L.append((int(nombre), "int"))
+                    ch = file.read(1)
+                    break
+        elif(ch == '"'):
+            word = ""
+            while(1):
+                ch = file.read(1)
+                if(ch == '"'):
+                    L.append((word, "mot"))
+                    ch = file.read(1)
+                    break
+                else:
+                    word = word + ch
+        elif(ch == "/"):
+            ch = file.read(1)
+            if(ch == "/"):
+                file.readline()
+                ch = file.read(1)
+            elif(ch == "*"):
+                ch = file.read(1)
+                while(1):
+                    if(ch == "*"):
+                        ch = file.read(1)
+                        if(ch == "/"):
+                            ch = file.read(1)
+                            break
+            else:
+                L.append(("/", "operateur"))
+                ch = file.read(1)
+        elif(ch in symbole):
+            L.append((ch, "opérateur"))
+            ch = file.read(1)
+        else:
+            ch = file.read(1)
+        print(L)
+    file.close()
+    return L
+
+L = lexeur()
+print(L)
+#print(len(L))
