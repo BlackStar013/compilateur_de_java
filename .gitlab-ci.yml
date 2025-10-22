@@ -1,0 +1,47 @@
+image: gibson-registry.telecomnancy.univ-lorraine.fr/projets/2526/PCL/projet/FISE-groupe-21/
+
+stages:
+  - build-image
+  - build
+  - test
+  - clean
+
+build-image-job:
+  stage: build-image
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  # pour qu'il se lance que si il vient de schedule
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  # image pré faite
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}"
+
+#build-job:
+#  stage: build
+#  script:
+#    - touch test1.txt
+#    - echo "1+2 = 13"
+#    - touch test2.txt
+#    - echo ""bonjour""
+
+test:
+  stage: test
+  script:
+    - pytest -- timeout: 180 --forked -- junitxml=resultat.xml
+  artefact:
+    report:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+#clean-job:
+#  - stage: clean
+#  - script:
+#    - rm test1.txt
+#    - rm test2.txt
