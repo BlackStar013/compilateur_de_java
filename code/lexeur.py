@@ -1,4 +1,5 @@
 #from re import * #marche pas en tout cas pour l'instant car read lit des str
+import sys
 
 chiffres = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 alpha_min = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -6,9 +7,11 @@ alpha_maj = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N
 operateur = ["+", "-", "*", "/", "%", "=", "||", "&&", "!=", "<", "<=", ">=", ">", "."]
 symbole = [",", ";", "(", ")", "[", "]", "{", "}"]
 
-
+#print("au revoir", len(sys.argv))
+#print("bonjour", sys.argv[1])
 def lexeur():
-    file = open("texte_source.txt", "r")
+    file = open(sys.argv[1], "r")
+    # il faut donc rentrer la commande python lexeur.py texte_source.txt
     ch = ""
     L = []
     ch = file.read(1)
