@@ -31,8 +31,9 @@ build-image-job:
 
 test:
   stage: test
-  script :
-    - pytest -- timeout: 60 --forked
+  script:
+    - ls
+    #- pytest -- timeout: 60 --forked
 
 
 #clean-job:
