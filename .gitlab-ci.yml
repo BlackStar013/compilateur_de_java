@@ -32,9 +32,13 @@ build-image-job:
 test:
   stage: test
   script:
-    - ls
-    #- pytest -- timeout: 60 --forked
-
+    - pytest -- timeout: 180 --forked -- junitxml=resultat.xml
+  artefact:
+    report:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
 
 #clean-job:
 #  - stage: clean
