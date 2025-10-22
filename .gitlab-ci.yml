@@ -33,7 +33,7 @@ test:
   stage: test
   script:
     - pytest -- timeout: 180 --forked -- junitxml=resultat.xml
-  artefact:
+  artifacts:
     report:
       junit: [./resultat.xml]
   timeout: 4m
