@@ -1,5 +1,5 @@
 #from re import * #marche pas en tout cas pour l'instant car read lit des str
-import sys
+#import sys
 
 chiffres = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 alpha_min = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -9,8 +9,8 @@ symbole = [",", ";", "(", ")", "[", "]", "{", "}"]
 
 #print("au revoir", len(sys.argv))
 #print("bonjour", sys.argv[1])
-def lexeur():
-    file = open(sys.argv[1], "r")
+def lexeur(texte_source):
+    file = open(texte_source, "r")
     # il faut donc rentrer la commande python lexeur.py texte_source.txt
     ch = ""
     L = []
@@ -72,7 +72,13 @@ def lexeur():
             ch = file.read(1)
         # print(L)
     file.close()
+    print(L)
     return L
 
-L = lexeur()
-print(L)
+
+def main():
+    fichier = sys.argv[1]
+    lexeur(fichier)
+
+if __name__ == "__main__":
+    main()
