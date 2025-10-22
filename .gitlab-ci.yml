@@ -32,7 +32,7 @@ build-image-job:
 test:
   stage: test
   script:
-    - pytest --timeout:180 --forked --junitxml=resultat.xml
+    - pytest --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
