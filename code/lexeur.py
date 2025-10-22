@@ -73,6 +73,7 @@ def lexeur(texte_source):
         # print(L)
     file.close()
     print(L)
+    print()
     return L
 
 
