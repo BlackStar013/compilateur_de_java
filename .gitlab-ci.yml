@@ -1,4 +1,4 @@
-image: gibson-registry.telecomnancy.univ-lorraine.fr/projets/2526/pcl/projet/fise-groupe-21/fise-groupe-21:latest
+image: gibson-registry.telecomnancy.univ-lorraine.fr/projets/2526/pcl/projet/fise-groupe-21:latest
 
 stages:
   - build-image
