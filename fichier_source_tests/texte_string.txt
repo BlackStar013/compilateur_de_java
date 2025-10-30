@@ -1,0 +1,7 @@
+"3 petits chats, 3 petits chats, 3 petits chats, chats, chats"
+"il a int sa game de lol"
+"c'est pas faux, car ce n'est pas un boolean"
+// test commentaire non lu
+//test commentaire non lu sans les espaces
+/* test autre commentaire non lu */
+/*test autre commentaire non lu sans espace*/
