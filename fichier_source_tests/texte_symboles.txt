@@ -1,0 +1,4 @@
+"ceci est un paragraphe" {"test"};
+"suivi par des crochets" [13];
+"et enfin des parenthèses" (int);
+"et toutes les lignes finissent par un point virgule" ;
