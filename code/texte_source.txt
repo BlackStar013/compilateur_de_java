@@ -1,3 +1,0 @@
-13 + 2 = "ChAt_13" /*test*/
-"miaou" // etdgsvhqs
-;,{}()[]
