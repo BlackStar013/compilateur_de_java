@@ -1,3 +1,0 @@
-boolean bool
-else_01 else
-_instanceof__13 test
