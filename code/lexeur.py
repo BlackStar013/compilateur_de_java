@@ -22,11 +22,7 @@ def lexeur(txt):
                     multi = multi * 10
                     nb.append(c)
                 elif(c in alpha_maj or c in alpha_min or c == "." or c == ","): #ALPHABET/REEL DANS CHIFFRE
-                    print("Erreur", c)
-
-                    while (c in chiffres or c in alpha_maj or c in alpha_min or c == "." or c == ","):
-                        c = file.read(1)
-                    break
+                    return("Erreur")
                 else:
                     nombre = 0
                     for i in range(len(nb)):
@@ -37,13 +33,11 @@ def lexeur(txt):
         elif c in alpha_min or c in alpha_maj or c == "_": #reconnaître un mot clé ou un identifiant
             mot = c
             c =  file.read(1)
-            while c in alpha_min or c in alpha_maj: 
+            while c in alpha_min or c in alpha_maj or c == '_' or c in chiffres: 
                 mot = mot + c
                 c = file.read(1)
-            if(c not in chiffres or c not in alpha_maj or c not in alpha_min or c != "_"): #CARACTERE NON VOULU DANS ALPHABET
-                print("Erreur", c)
-                while (c in chiffres or c in alpha_maj or c in alpha_min):
-                        c = file.read(1)
+            if(c not in chiffres and c not in alpha_maj and c not in alpha_min and c != "_" and c != ' ' and c != "\n" and c not in symbol and c not in operat): #CARACTERE NON VOULU DANS ALPHABET
+                return("Erreur")
             elif c in chiffres or c == "_":
                 while c in alpha_min or c in alpha_maj or c in chiffres or c =="_":
                     mot = mot + c
@@ -89,14 +83,14 @@ def lexeur(txt):
         elif c == "|": #reconnaître ||
             c = file.read(1)
             if c != "|":
-                return
+                return("Erreur")
             else:
                 L.append(("||", "opérateurs"))
                 c = file.read(1)
         elif c == "&": #reconnaître &&
             c = file.read(1)
             if c != "&":
-                return
+                return("Erreur")
             else:
                 L.append(("&&", "opérateurs"))
                 c = file.read(1)
@@ -134,10 +128,7 @@ def lexeur(txt):
         elif c == "\n" or c == ' ':
             c = file.read(1)
         else:
-            print("Erreur", c)
-            c = file.read(1)
-            while (c in chiffres or c in alpha_maj or c in alpha_min):
-                c = file.read(1)
+            return("Erreur")
     file.close()
     print(L)
     return(L)
