@@ -1,0 +1,103 @@
+image: gibson-registry.telecomnancy.univ-lorraine.fr/projets/2526/pcl/projet/fise-groupe-21:latest
+
+stages:
+  - build-image
+  - build
+  - test
+  - clean
+
+build-image-job:
+  stage: build-image
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  # pour qu'il se lance que si il vient de schedule
+  image:
+    name: gcr.io/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  # image pré faite
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}"
+
+#build-job:
+#  stage: build
+#  script:
+#    - touch test1.txt
+#    - echo "1+2 = 13"
+#    - touch test2.txt
+#    - echo ""bonjour""
+
+test_operation:
+  stage: test
+  script:
+    - pytest ./code/test_lexeur.py::test_operation --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_operateur:
+  stage: test
+  script:
+    - pytest ./code/test_lexeur.py::test_operateur --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_string:
+  stage: test
+  script:
+    - pytest ./code/test_lexeur.py::test_string --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_motsclef:
+  stage: test
+  script:
+    - pytest ./code/test_lexeur.py::test_motsclef --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_idvsmotclef:
+  stage: test
+  script:
+    - pytest ./code/test_lexeur.py::test_idvsmotclef --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_symboles:
+  stage: test
+  script:
+    - pytest ./code/test_lexeur.py::test_symboles --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+
+#clean-job:
+#  - stage: clean
+#  - script:
+#    - rm test1.txt
+#    - rm test2.txt
