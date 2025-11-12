@@ -5,7 +5,7 @@ alpha_min = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n
 alpha_maj = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 mots_cles = ["boolean", "class", "else", "extends", "false", "for", "if", "int", "new", "null", "public", "return", "static", "this", "true", "void"]
 symbol = [";", "{", "}" ,"(" ,")", "[" , "]", ","]
-operat = ["+", "*", "%", "-"]
+operat = ["+", "*", "%", "-", "."]
 
 
 def lexeur(txt):
@@ -124,6 +124,7 @@ def lexeur(txt):
         elif c == "\n" or c == ' ':
             c = file.read(1)
     file.close()
+    #print(L)
     return(L)
 
 
@@ -135,7 +136,7 @@ def lire(M):
 def main():
     fichier = sys.argv[1]
     L = lexeur(fichier)
-    lire(L)
+    #lire(L)
 
 
 
