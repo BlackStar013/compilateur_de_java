@@ -19,11 +19,15 @@ def test_idvsmotclef():
 def test_symboles():
     assert(lexeur("./fichier_source_tests/texte_symboles.txt") == [('ceci est un paragraphe', 'mot'), ('{', 'symboles'), ('test', 'mot'), ('}', 'symboles'), (';', 'symboles'), ('suivi par des crochets', 'mot'), ('[', 'symboles'), (13, 'integer'), (']', 'symboles'), (';', 'symboles'), ('et enfin des parentheses', 'mot'), ('(', 'symboles'), ('int', 'mots clés'), (')', 'symboles'), (';', 'symboles'), ('et toutes les lignes finissent par un point virgule', 'mot'), (';', 'symboles')])
 
+def test_erreur():
+    assert(lexeur("./fichier_source_tests/texte_erreur.txt") == [('=', 'opérateurs'), (6, 'integer'), ('+', 'opérateurs'), (3, 'integer'), (';', 'symboles')])
+
 #test_operation()
 #test_operateur()
 #test_string()
 #test_motsclef()
 #test_idvsmotclef()
 #test_symboles()
+#test_erreur()
 
 print("les tests sont passés\n")

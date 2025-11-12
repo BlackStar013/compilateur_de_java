@@ -21,6 +21,12 @@ def lexeur(txt):
                 if(c in chiffres):
                     multi = multi * 10
                     nb.append(c)
+                elif(c in alpha_maj or c in alpha_min or c == "." or c == ","): #ALPHABET/REEL DANS CHIFFRE
+                    print("Erreur", c)
+
+                    while (c in chiffres or c in alpha_maj or c in alpha_min or c == "." or c == ","):
+                        c = file.read(1)
+                    break
                 else:
                     nombre = 0
                     for i in range(len(nb)):
@@ -34,7 +40,11 @@ def lexeur(txt):
             while c in alpha_min or c in alpha_maj: 
                 mot = mot + c
                 c = file.read(1)
-            if c in chiffres or c == "_":
+            if(c not in chiffres or c not in alpha_maj or c not in alpha_min or c != "_"): #CARACTERE NON VOULU DANS ALPHABET
+                print("Erreur", c)
+                while (c in chiffres or c in alpha_maj or c in alpha_min):
+                        c = file.read(1)
+            elif c in chiffres or c == "_":
                 while c in alpha_min or c in alpha_maj or c in chiffres or c =="_":
                     mot = mot + c
                     c = file.read(1)
@@ -123,10 +133,14 @@ def lexeur(txt):
             c = file.read(1)
         elif c == "\n" or c == ' ':
             c = file.read(1)
+        else:
+            print("Erreur", c)
+            c = file.read(1)
+            while (c in chiffres or c in alpha_maj or c in alpha_min):
+                c = file.read(1)
     file.close()
-    #print(L)
+    print(L)
     return(L)
-
 
 
 def lire(M):
