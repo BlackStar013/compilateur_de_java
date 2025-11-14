@@ -1,16 +1,17 @@
 class Node:
-    def __init__(self,position):
+    def __init__(self,nom,fils):
         '''
-        position: ligne
+        
         '''
-        self.position = position
+        self.nom = nom #le type
+        self.fils = fils #liste des fils
 
 class File:
     '''
     root de tous les fichier
     '''
-    def __init__(self,classes, main_class, position=None):
-        super().__init__(position)
+    def __init__(self,classes, main_class, fils=None):
+        super().__init__("fichier", fils)
         self.classes = classes #liste de classes dans le fichier
         self.main_class = main_class #noeud Main_class
 
