@@ -8,8 +8,8 @@ def reculer():
 #################################
 
 def verif_file():
-    # mot = lire()
-    return(verif_classes() and verif_class_main()) #il y a plusieurs class
+    verif_classes()
+    return(verif_class_main())
     
 
 def verif_classes(): #boucle while tant qu'on a un class
@@ -36,10 +36,10 @@ def verif_class():
                         return False
                     token = lire()
                 if token[0] == "{":
-                    if verif_decles():
-                        token = lire()
-                        if token[0] == "}":
-                            return True
+                    verif_decles()
+                    token = lire()
+                    if token[0] == "}":
+                        return True
     return("le fichier n'est pas juste")
 
 def verif_decl():
@@ -60,14 +60,10 @@ def verif_decl():
                             return False
                     token = lire()
                     if(token[0] == "{"):
+                        verif_stmtes()
                         token = lire()
-                        if(token[0]!="}"):
-                            reculer()
-                            if not verif_stmtes():
-                                return False
-                            token = lire()
-                            if token[0] != "}":
-                                return False 
+                        if token[0] != "}":
+                            return False 
         case("boolean",_):
             return(verif_ident() and verif_decl_suffix())
         case("int",_):
@@ -76,6 +72,14 @@ def verif_decl():
             return(verif_decl_ident())
         case _:
             return False
+        
+def verif_decles():
+    var = True
+    while var:
+        i = n ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
+        var = verif_decl()
+    n = i
+    
 
 
 def verif_decl_suffix():
@@ -93,7 +97,7 @@ def verif_decl_suffix():
                 if token[0] != ")":
                     return False
                 token = lire()
-            if token == "{":
+            if token[0] == "{":
                 verif_stmtes()
                 token = lire()
                 if token[0] == "}":
@@ -103,3 +107,145 @@ def verif_decl_suffix():
             return False
         
 #prime devient bis
+
+
+def verif_lexpr():
+    return(verif_expr() and verif_lexpr_bis())
+
+
+####################################
+def verif_lexpr_bis():
+    token = lire()
+    if token[0] == ",":
+        return(verif_lexpr())
+    else:
+        reculer()
+        return True
+    
+def verif_stmt():
+    token = lire()
+    match token[0], token[1]:
+        case ";", _ : 
+            return True
+        case "if", _:
+            token = lire()
+            if token[0] == "(":
+                if verif_expr():
+                    token = lire()
+                    if token[0] == ")":
+                        return(verif_stmt() and verif_stmt_if())
+        case "for", _:
+            token = lire()
+            if token[0] == "(":
+                for i in range(2):
+                    if(token[0] != ";"):
+                        reculer()
+                        if not verif_expr():
+                            return False
+                    token = lire()
+                    if token[0] != ";":
+                        return False
+                    token = lire()
+                
+                if not token[0] == ")":
+                    reculer()
+                    if not verif_expr():
+                        return False
+                    token = lire()
+                if token[0] == ")":
+                    return verif_stmt()
+        case "{", _:
+            if verif_stmtes():
+                token = lire()
+                return(token[0] == "}")
+        case "return", _:
+            token = lire()
+            if token[0] != ";":
+                reculer()
+                if not(verif_expr()):
+                    return False
+                token = lire()
+            if token[0] == ";":
+                return True
+        case "boolean" | "int", _:
+            return(verif_ident() and verif_stmt_type())
+        case _,"integer":
+            if verif_integer():
+                if verif_expr_bis():
+                    token = lire()
+                    return(token[0] )== ";"
+        case _, "mot":
+            if verif_string():
+                if verif_expr_bis():
+                    token = lire()
+                    return(token[0] )== ";"
+        #######################ON POURRAIT LES REGROUPER AVEC UN TRUC EN MODE {token[1]}
+        case "true" | "false" | "this " | "new",_:
+            if verif_expr_bis():
+                token = lire()
+                return(token[0] )== ";"
+        case "new", _:
+            if verif_ident():
+                token = lire()
+                if token[0] == "(":
+                    token = lire()
+                    if token[0] != ")":
+                        reculer()
+                        if not(verif_expr()):
+                            return False
+                        token = lire()
+                    if token[0] == ")":
+                        if verif_expr_bis():
+                            token = lire()
+                            return(token[0] == ";")
+        case "!" | "-",_:
+            if verif_expr():
+                token = lire()
+                return(token[0] )== ";"
+        case "(", _:
+            if(verif_expr_parenthese() and verif_expr_bis):
+                token = lire()
+                return(token[0] )== ";"
+        case _,"ident":
+            return(verif_stmt_ident())
+    return False
+
+
+def verif_stmtes():
+    var = True
+    while var:
+        i = n ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
+        var = verif_stmt()
+    n = i
+
+def verif_stmt_type():
+    token = lire()
+    match token[0]:
+        case ";":
+            return True
+        case "=":
+            if verif_expr():
+                token = lire()
+                return(token[0] == ";")
+    return False
+
+
+
+def verif_if():
+    token = lire()
+    if(token[0] == "else"):
+        return verif_stmt()
+    else:
+        reculer()
+        return True
+    
+def verif_stmt_ident():
+    token = lire()
+    match token[1]:
+        case "ident":
+            return verif_stmt_type()
+        case _:
+            reculer()
+            if verif_expr_bis():
+                token = lire()
+                return(token[0] == ";")
