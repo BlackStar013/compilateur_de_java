@@ -1,2 +1,3 @@
-pcl/
-code/test_nodes.py
+env*/
+code/arbre/nodes_test.py
+code/*/__pycache__
