@@ -1,25 +1,33 @@
 class Node:
-    def __init__(self,nom,fils):
+    def __init__(self,nom, parent=None, fils=None):
         '''
-        
+        nom: string avec l'étiquette
+        fils: liste de noeuds fils
+        parent: noeud parent
         '''
-        self.nom = nom #le type
-        self.fils = fils #liste des fils
+        self.nom = nom 
+        self.parent = parent
+        self.fils = fils
 
-class File:
-    '''
-    root de tous les fichier
-    '''
-    def __init__(self,classes, main_class, fils=None):
-        super().__init__("fichier", fils)
-        self.classes = classes #liste de classes dans le fichier
-        self.main_class = main_class #noeud Main_class
+    def add_fils(self, node_f):
+        self.fils.append(node_f)
+    
+    def set_parent(self, node_p):
+        self.parent = node_p
 
-class Class: pass
+    def afficher(self):
+        print(self.nom)
 
-class Main_class:
-    def __init__(self,arg, stmts, position=None):
-        super.__init__(position)
-        self.arg = arg
-        self.stmts = stmts #liste de noeuds stmt ou noeud stmts qui à son tour à des fils stmt
+class File(Node):
+    def __init__(self, main, classes=None):
+        super().__init__("File", None, list(main, classes))
+        self.main = main
+        self.classes = classes
 
+class Classes(Node):
+    def __init__(self):
+        super().__init__("Classes", None, list())
+
+class Class(Node):
+    def __init__(self):
+        super().__init__("Class", None, list())
