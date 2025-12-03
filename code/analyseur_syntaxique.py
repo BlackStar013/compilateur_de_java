@@ -269,7 +269,15 @@ class Parseur:
                 token = self.lire()
                 if token[1] == "ident" :
                     token = self.lire()
-                   # if token[0] == "(" :   cas à compléter 
+                    if token[0] == "(" :   
+                        token = self.lire()
+                        if token[0] != ")" :
+                            self.reculer(1)
+                            if not self.verif_lexpr() :
+                                return False
+                            token = self.lire()
+                        if token[0] == ")" :
+                            return True 
             case _, "ident" :
                 return True 
     
