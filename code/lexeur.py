@@ -141,7 +141,7 @@ def lire(M):
 def main():
     fichier = sys.argv[1]
     L = lexeur(fichier)
-    #lire(L)
+    lire(L)
 
 
 

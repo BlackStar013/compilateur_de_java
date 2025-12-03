@@ -23,12 +23,12 @@ def test_erreur():
     assert(lexeur("./fichier_source_tests/texte_erreur.txt") == "Erreur")
            
 
-#test_operation()
-#test_operateur()
-#test_string()
-#test_motsclef()
-#test_idvsmotclef()
-#test_symboles()
-#test_erreur()
+test_operation()
+test_operateur()
+test_string()
+test_motsclef()
+test_idvsmotclef()
+test_symboles()
+test_erreur()
 
 print("les tests sont passés\n")
