@@ -41,7 +41,9 @@ class Parseur:
         print("passage verif_classes")
         var = True
         while var:
+            i = self.pos
             var = self.verif_class()
+        self.pos = i
         return True
 
 
@@ -80,7 +82,7 @@ class Parseur:
                     if(token[0]=="("):
                         token = self.lire()
                         if(token[0]!=")"):
-                            token = self.reculer()
+                            token = self.reculer(1)
                             if(not self.verif_params()):
                                 return False
                             token = self.lire()
@@ -90,7 +92,7 @@ class Parseur:
                         if(token[0] == "{"):
                             token = self.lire()
                             if(token[0]!="}"):
-                                token = self.reculer()
+                                token = self.reculer(1)
                                 if not self.verif_stmtes():
                                     return False
                                 token = self.lire()
@@ -114,9 +116,10 @@ class Parseur:
         print("passage verif_decles")
         var = True
         while var:
-            i = n ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
+            i = self.pos ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
             var = self.verif_decl()
-        n = i
+        self.pos = i
+        return True
 
 
     def verif_decl_suffix(self):
@@ -154,7 +157,7 @@ class Parseur:
         elif(token[0] == "("):
             token = self.lire()
             if(token[0] != ")"):
-                token = self.reculer()
+                token = self.reculer(1)
                 if(not self.verif_params()):
                     return False
                 token = self.lire()
@@ -164,7 +167,7 @@ class Parseur:
                 if(token[0] == "{"):
                     token = self.lire()
                     if(token[0]!="}"):
-                        token = self.reculer()
+                        token = self.reculer(1)
                         if not self.verif_stmtes():
                             return False
                         token = self.lire()
@@ -224,7 +227,7 @@ class Parseur:
                                                             if(token[0] == "{"):
                                                                 token = self.lire()
                                                                 if(token[0]!="}"):
-                                                                    token = self.reculer()
+                                                                    token = self.reculer(1)
                                                                     if not self.verif_stmtes():
                                                                         return False
                                                                     token = self.lire()
@@ -498,7 +501,9 @@ class Parseur:
                 if token[0] == ";":
                     return True
             case "boolean" | "int", _:
-                return(self.verif_ident() and self.verif_stmt_type())
+                token = self.lire()
+                if(token[1] == "ident"):
+                    return(self.verif_stmt_type())
             case _,"integer":
                 if self.verif_integer():
                     if self.verif_expr_bis():
@@ -515,7 +520,8 @@ class Parseur:
                     token = self.lire()
                     return(token[0] )== ";"
             case "new", _:
-                if self.verif_ident():
+                token = self.lire()
+                if(token[0] == "ident"):
                     token = self.lire()
                     if token[0] == "(":
                         token = self.lire()
@@ -545,9 +551,10 @@ class Parseur:
         print("passage verif_stmtes")
         var = True
         while var:
-            i = n ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
+            i = self.pos ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
             var = self.verif_stmt()
-        n = i
+        self.pos = i
+        return True
 
     def verif_stmt_type(self):
         print("passage verif_stmt_type")
@@ -563,7 +570,7 @@ class Parseur:
 
 
 
-    def verif_if(self):
+    def verif_stmt_if(self):
         print("passage verif_if")
         token = self.lire()
         if(token[0] == "else"):
