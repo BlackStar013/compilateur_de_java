@@ -1,4 +1,6 @@
 import sys
+from analyseur_syntaxique import *
+
 
 chiffres = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 alpha_min = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -130,21 +132,8 @@ def lexeur(txt):
         else:
             return("Erreur")
     file.close()
-    print(L)
     return(L)
 
 
-def lire(M):
-    for i in range(len(M)):
-        print(M[i])
-
-def main():
-    fichier = sys.argv[1]
-    L = lexeur(fichier)
-    #lire(L)
 
 
-
-
-if __name__ == "__main__":
-    main()

@@ -1,0 +1,225 @@
+/**
+ * Un iceberg rectangulaire
+ * @version 2025
+ */
+class Iceberg2D {
+
+    private Point enBasAGauche ;
+    private Point enHautADroite ;
+
+    /**
+     * @param g le coin en bas à gauche
+     * @param d le coin en haut à droite
+     * uniquement en coordonnées positives
+     */
+    public Iceberg2D(Point g, Point d) {
+        // A compléter
+        this.enBasAGauche = g ;
+        this.enHautADroite = d ;
+    }
+
+    /** Construction par fusion de deux icebergs qui se touchent
+     * @param i1
+     * @param i2
+     */
+    public Iceberg2D(Iceberg2D i1, Iceberg2D i2) {
+        // A compléter
+        double minord ;
+        double maxord ;
+        double minabs;
+        double maxabs;
+        if(i1.enBasAGauche.getAbscisse() < i2.enBasAGauche.getAbscisse()) {
+            minabs = i1.enBasAGauche.getAbscisse();
+        }
+        else {
+            minabs = i2.enBasAGauche.getAbscisse();
+        }
+        if (i1.enBasAGauche.getOrdonnee() < i2.enBasAGauche.getOrdonnee()) {
+            minord = i1.enBasAGauche.getOrdonnee();
+        }
+        else {
+            minord = i2.enBasAGauche.getOrdonnee();
+        }
+        if (i1.enHautADroite.getAbscisse() > i2.enHautADroite.getAbscisse()) {
+            maxabs = i1.enHautADroite.getAbscisse();
+        }
+        else {
+            maxabs = i2.enHautADroite.getAbscisse();
+        }
+        if (i1.enHautADroite.getOrdonnee() > i2.enHautADroite.getOrdonnee()) {
+            maxord = i1.enHautADroite.getOrdonnee();
+        }
+        else{
+            maxord = i2.enHautADroite.getOrdonnee();
+        }
+        this.enBasAGauche = new Point(minabs, minord);
+        this.enHautADroite = new Point(maxabs, maxord);
+    }
+
+    /**
+     * @return le coin en bas à gauche
+     */
+    public Point coinEnBasAGauche() {
+        return this.enBasAGauche ;
+    }
+
+    /**
+     * @return le coin en haut à droite
+     */
+    public Point coinEnHautADroite() {
+        return this.enHautADroite ;
+    }
+
+
+    /**
+     * @return hauteur
+     */
+    public double hauteur() {
+        return this.enHautADroite.getOrdonnee() - this.enBasAGauche.getOrdonnee();
+    }
+
+    /**
+     * @return largeur
+     */
+    public double largeur() {
+        return this.enHautADroite.getAbscisse() - this.enBasAGauche.getAbscisse();
+    }
+
+    /**
+     * @return surface totale
+     */
+    public double surface() {
+        return this.hauteur() * this.largeur() ;
+    }
+
+    /**
+     * @param i
+     * @return vrai si collision entre les deux icebergs
+     */
+    public boolean collision(Iceberg2D i) {
+        if (this.enBasAGauche.getAbscisse() == i.enHautADroite.getAbscisse() || this.enBasAGauche.getOrdonnee() == i.enHautADroite.getOrdonnee() || this.enHautADroite.getAbscisse() == i.enBasAGauche.getAbscisse() || this.enHautADroite.getOrdonnee() == i.enBasAGauche.getOrdonnee()) {
+             return true;
+         }
+        return false;
+    }
+
+    /**
+     * @param i
+     * @return vrai si this est plus volumineux que i
+     */
+    public boolean estPlusGrosQue(Iceberg2D i) {
+        if (this.surface() > i.surface()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return <PG, PD>
+     */
+    public String toString() {
+        return "<" + this.enBasAGauche.toString() + ", " + this.enHautADroite.toString() + ">" ;
+    }
+
+    /**
+     * @return le point au centre de l'iceberg
+     */
+    public Point centre() {
+        double hauteur = this.hauteur()/2 ;
+        double largeur = this.largeur()/2;
+        Point pt = new Point(this.enBasAGauche.getAbscisse() + largeur, this.enBasAGauche.getOrdonnee() + hauteur);
+        return pt;
+    }
+
+    /** Réduction dans les quatre directions ; le centre ne bouge pas
+     * @param fr dans ]0..1[ facteur de réduction
+     */
+    public void fondre(double fr) {
+        double ha = this.enHautADroite.getAbscisse();
+        double ba = this.enBasAGauche.getAbscisse();
+        double ho = this.enHautADroite.getOrdonnee();
+        double bo = this.enBasAGauche.getOrdonnee();
+        double l = this.largeur();
+        double h = this.hauteur();
+        double delta = 4*l*l + 4*h*h + l*h*(8-16*(1-fr));
+        double x = (2*(l+h)+Math.sqrt(delta))/8;
+        Point g = new Point (ha - x, ho - x);
+        Point d = new Point (ba + x, bo + x);
+        this.enBasAGauche = g;
+        this.enHautADroite = d;
+    }
+
+    /**
+     * Casser une partie à droite
+     * @param fr dans ]0..1[ facteur de réduction
+     */
+    public void casserDroite(double fr) {
+        double ha = this.enHautADroite.getAbscisse();
+        double ba = this.enBasAGauche.getAbscisse();
+        double ho = this.enHautADroite.getOrdonnee();
+        double bo = this.enBasAGauche.getOrdonnee();
+        double l = this.largeur();
+        double h = this.hauteur();
+        double x = l - fr*l;
+        Point d = new Point (ha - x, ho);
+        Point g = new Point (ba, bo);
+        this.enBasAGauche = g;
+        this.enHautADroite = d;
+    }
+
+    /**
+     * Casser une partie à gauche
+     * @param fr dans ]0..1[ facteur de réduction
+     */
+    public void casserGauche(double fr) {
+        double ha = this.enHautADroite.getAbscisse();
+        double ba = this.enBasAGauche.getAbscisse();
+        double ho = this.enHautADroite.getOrdonnee();
+        double bo = this.enBasAGauche.getOrdonnee();
+        double l = this.largeur();
+        double h = this.hauteur();
+        double x = l - fr*l;
+        Point d = new Point (ha, ho);
+        Point g = new Point (ba + x, bo);
+        this.enBasAGauche = g;
+        this.enHautADroite = d;
+    }
+
+    /**
+     * Casser une partie en haut
+     * @param fr dans ]0..1[ facteur de réduction
+     */
+    public void casserHaut(double fr) {
+        double ha = this.enHautADroite.getAbscisse();
+        double ba = this.enBasAGauche.getAbscisse();
+        double ho = this.enHautADroite.getOrdonnee();
+        double bo = this.enBasAGauche.getOrdonnee();
+        double l = this.largeur();
+        double h = this.hauteur();
+        double x = h - fr*h;
+        Point d = new Point (ha, ho - x);
+        Point g = new Point (ba, bo);
+        this.enBasAGauche = g;
+        this.enHautADroite = d;
+    }
+
+    /**
+     * Casser une partie en bas
+     * @param fr dans ]0..1[ : définit le pourcentage supprimé
+     */
+    public void casserBas(double fr) {
+        double ha = this.enHautADroite.getAbscisse();
+        double ba = this.enBasAGauche.getAbscisse();
+        double ho = this.enHautADroite.getOrdonnee();
+        double bo = this.enBasAGauche.getOrdonnee();
+        double l = this.largeur();
+        double h = this.hauteur();
+        double x = h - fr*h;
+        Point d = new Point (ha, ho);
+        Point g = new Point (ba, bo + x);
+        this.enBasAGauche = g;
+        this.enHautADroite = d;
+    }
+
+
+}

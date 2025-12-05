@@ -1,0 +1,31 @@
+class chapeau extends peaucha{
+    int b;
+    boolean d;
+}
+
+class manteau {
+    int a;
+    int j;
+    boolean b;
+}
+
+class chaussures extends manteau {
+    int c;
+    void chaussettes(){
+        //if(gauche == jaune){
+        //    return(true);
+        //}
+        //else{
+        //   return(false);
+        //}
+    }
+}
+
+class Main {
+    public static void main(String chat[]){
+        int a = 0;
+        boolean peau = true;
+        if(peau) a = 3;
+        return a;
+    }
+}

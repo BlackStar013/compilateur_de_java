@@ -1,0 +1,14 @@
+class chapeau extends peaucha{
+    // int b = c;
+    // boolean d = false;
+    // return (b*d);
+}
+
+class Main {
+    public static void main(String chat[]){
+        int a = 0;
+        boolean peau = true;
+        if(peau) a = 3;
+        return a;
+    }
+}
