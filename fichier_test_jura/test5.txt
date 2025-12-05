@@ -12,12 +12,12 @@ class manteau {
 class chaussures extends manteau {
     int c;
     void chaussettes(){
-        //if(gauche == jaune){
-        //    return(true);
-        //}
-        //else{
-        //   return(false);
-        //}
+        if(gauche == jaune){
+           return true;
+        }
+        else{
+           return false;
+        }
     }
 }
 
@@ -25,6 +25,7 @@ class Main {
     public static void main(String chat[]){
         int a = 0;
         boolean peau = true;
+        boolean result = str instanceof String;
         if(peau) a = 3;
         return a;
     }

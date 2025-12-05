@@ -32,8 +32,18 @@ def test_plusieurs_class_avant_Main():
     verif = parseur.verif_file()
     assert(verif == True)
 
+def test_operations():
+    fichier = "./fichier_test_jura/test6.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    # print(parseur.tokens)
+    verif = parseur.verif_file()
+    assert(verif == True)
+
 if __name__ == "__main__":
-    test_class_Main()
-    test_class_mainetMain()
-    test_plusieurs_class_avant_Main()
+    test_class_Main() #1
+    test_class_mainetMain() #2
+    test_erreur() #3
+    test_plusieurs_class_avant_Main() #5
+    test_operations() #6
     print("les tests sont passés\n")

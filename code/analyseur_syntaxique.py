@@ -81,7 +81,6 @@ class Parseur:
                     token = self.lire()
                     if(token[0]=="("):
                         token = self.lire()
-                        print(token)
                         if(token[0]!=")"):
                             token = self.reculer(1)
                             if(not self.verif_params()):
@@ -90,10 +89,8 @@ class Parseur:
                             if(token[0] != ")"):
                                 return False
                         token = self.lire()
-                        print(token)
                         if(token[0] == "{"):
                             token = self.lire()
-                            print(token)
                             if(token[0]!="}"):
                                 token = self.reculer(1)
                                 if not self.verif_stmtes():
@@ -347,7 +344,7 @@ class Parseur:
         match token[0] :
             case "*" :
                 return (self.verif_expr_N8() and self.verif_expr_N7_bis())
-            case "//" :
+            case "/" :
                 return (self.verif_expr_N8() and self.verif_expr_N7_bis())
             case "%" :
                 return (self.verif_expr_N8() and self.verif_expr_N7_bis())
@@ -411,7 +408,7 @@ class Parseur:
         match token[0], token[1] :
             case _, "integer" :
                 return True 
-            case _, "string" :
+            case _, "mot" :
                 return True 
             case "true", _ :
                 return True
