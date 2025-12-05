@@ -4,15 +4,15 @@
  */
 class Iceberg2D {
 
-    private Point enBasAGauche ;
-    private Point enHautADroite ;
+    int enBasAGauche ;
+    int enHautADroite ;
 
     /**
      * @param g le coin en bas à gauche
      * @param d le coin en haut à droite
      * uniquement en coordonnées positives
      */
-    public Iceberg2D(Point g, Point d) {
+    void Iceberg2D(Point g, Point d) {
         // A compléter
         this.enBasAGauche = g ;
         this.enHautADroite = d ;
@@ -22,12 +22,12 @@ class Iceberg2D {
      * @param i1
      * @param i2
      */
-    public Iceberg2D(Iceberg2D i1, Iceberg2D i2) {
+    void Iceberg2D(Iceberg2D i1, Iceberg2D i2) {
         // A compléter
-        double minord ;
-        double maxord ;
-        double minabs;
-        double maxabs;
+        int minord ;
+        int maxord ;
+        int minabs;
+        int maxabs;
         if(i1.enBasAGauche.getAbscisse() < i2.enBasAGauche.getAbscisse()) {
             minabs = i1.enBasAGauche.getAbscisse();
         }
@@ -52,99 +52,46 @@ class Iceberg2D {
         else{
             maxord = i2.enHautADroite.getOrdonnee();
         }
-        this.enBasAGauche = new Point(minabs, minord);
-        this.enHautADroite = new Point(maxabs, maxord);
-    }
-
-    /**
-     * @return le coin en bas à gauche
-     */
-    public Point coinEnBasAGauche() {
-        return this.enBasAGauche ;
-    }
-
-    /**
-     * @return le coin en haut à droite
-     */
-    public Point coinEnHautADroite() {
-        return this.enHautADroite ;
-    }
-
-
-    /**
-     * @return hauteur
-     */
-    public double hauteur() {
-        return this.enHautADroite.getOrdonnee() - this.enBasAGauche.getOrdonnee();
-    }
-
-    /**
-     * @return largeur
-     */
-    public double largeur() {
-        return this.enHautADroite.getAbscisse() - this.enBasAGauche.getAbscisse();
-    }
-
-    /**
-     * @return surface totale
-     */
-    public double surface() {
-        return this.hauteur() * this.largeur() ;
+        //this.enBasAGauche = new Point(minabs, minord);
+        //this.enHautADroite = new Point(maxabs, maxord);
     }
 
     /**
      * @param i
      * @return vrai si collision entre les deux icebergs
      */
-    public boolean collision(Iceberg2D i) {
+    void collision(Iceberg2D i) {
+        boolean var;
         if (this.enBasAGauche.getAbscisse() == i.enHautADroite.getAbscisse() || this.enBasAGauche.getOrdonnee() == i.enHautADroite.getOrdonnee() || this.enHautADroite.getAbscisse() == i.enBasAGauche.getAbscisse() || this.enHautADroite.getOrdonnee() == i.enBasAGauche.getOrdonnee()) {
-             return true;
+            var = true;
          }
-        return false;
+        var = false;
     }
 
     /**
-     * @param i
-     * @return vrai si this est plus volumineux que i
-     */
-    public boolean estPlusGrosQue(Iceberg2D i) {
-        if (this.surface() > i.surface()) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @return <PG, PD>
-     */
-    public String toString() {
-        return "<" + this.enBasAGauche.toString() + ", " + this.enHautADroite.toString() + ">" ;
-    }
-
     /**
      * @return le point au centre de l'iceberg
      */
-    public Point centre() {
-        double hauteur = this.hauteur()/2 ;
-        double largeur = this.largeur()/2;
-        Point pt = new Point(this.enBasAGauche.getAbscisse() + largeur, this.enBasAGauche.getOrdonnee() + hauteur);
-        return pt;
+    void centre() {
+        int hauteur = this.hauteur()/2 ;
+        int largeur = this.largeur()/2;
+        //Point pt = new Point(this.enBasAGauche.getAbscisse() + largeur, this.enBasAGauche.getOrdonnee() + hauteur);
     }
 
     /** Réduction dans les quatre directions ; le centre ne bouge pas
      * @param fr dans ]0..1[ facteur de réduction
      */
-    public void fondre(double fr) {
-        double ha = this.enHautADroite.getAbscisse();
-        double ba = this.enBasAGauche.getAbscisse();
-        double ho = this.enHautADroite.getOrdonnee();
-        double bo = this.enBasAGauche.getOrdonnee();
-        double l = this.largeur();
-        double h = this.hauteur();
-        double delta = 4*l*l + 4*h*h + l*h*(8-16*(1-fr));
-        double x = (2*(l+h)+Math.sqrt(delta))/8;
-        Point g = new Point (ha - x, ho - x);
-        Point d = new Point (ba + x, bo + x);
+    void fondre(int fr) {
+        int ha = this.enHautADroite.getAbscisse();
+        int ba = this.enBasAGauche.getAbscisse();
+        int ho = this.enHautADroite.getOrdonnee();
+        int bo = this.enBasAGauche.getOrdonnee();
+        int l = this.largeur();
+        int h = this.hauteur();
+        //int delta = 4*l*l + 4*h*h + l*h*(8-16*(1-fr));
+        //int x = (2*(l+h)+Math.sqrt(delta))/8;
+        //Point g = new Point (ha - x, ho - x);
+        //Point d = new Point (ba + x, bo + x);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -153,16 +100,16 @@ class Iceberg2D {
      * Casser une partie à droite
      * @param fr dans ]0..1[ facteur de réduction
      */
-    public void casserDroite(double fr) {
-        double ha = this.enHautADroite.getAbscisse();
-        double ba = this.enBasAGauche.getAbscisse();
-        double ho = this.enHautADroite.getOrdonnee();
-        double bo = this.enBasAGauche.getOrdonnee();
-        double l = this.largeur();
-        double h = this.hauteur();
-        double x = l - fr*l;
-        Point d = new Point (ha - x, ho);
-        Point g = new Point (ba, bo);
+    void casserDroite(int fr) {
+        int ha = this.enHautADroite.getAbscisse();
+        int ba = this.enBasAGauche.getAbscisse();
+        int ho = this.enHautADroite.getOrdonnee();
+        int bo = this.enBasAGauche.getOrdonnee();
+        int l = this.largeur();
+        int h = this.hauteur();
+        int x = l - fr*l;
+        //Point d = new Point (ha - x, ho);
+        //Point g = new Point (ba, bo);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -171,16 +118,16 @@ class Iceberg2D {
      * Casser une partie à gauche
      * @param fr dans ]0..1[ facteur de réduction
      */
-    public void casserGauche(double fr) {
-        double ha = this.enHautADroite.getAbscisse();
-        double ba = this.enBasAGauche.getAbscisse();
-        double ho = this.enHautADroite.getOrdonnee();
-        double bo = this.enBasAGauche.getOrdonnee();
-        double l = this.largeur();
-        double h = this.hauteur();
-        double x = l - fr*l;
-        Point d = new Point (ha, ho);
-        Point g = new Point (ba + x, bo);
+    void casserGauche(int fr) {
+        int ha = this.enHautADroite.getAbscisse();
+        int ba = this.enBasAGauche.getAbscisse();
+        int ho = this.enHautADroite.getOrdonnee();
+        int bo = this.enBasAGauche.getOrdonnee();
+        int l = this.largeur();
+        int h = this.hauteur();
+        int x = l - fr*l;
+        //Point d = new Point (ha, ho);
+        //Point g = new Point (ba + x, bo);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -189,16 +136,16 @@ class Iceberg2D {
      * Casser une partie en haut
      * @param fr dans ]0..1[ facteur de réduction
      */
-    public void casserHaut(double fr) {
-        double ha = this.enHautADroite.getAbscisse();
-        double ba = this.enBasAGauche.getAbscisse();
-        double ho = this.enHautADroite.getOrdonnee();
-        double bo = this.enBasAGauche.getOrdonnee();
-        double l = this.largeur();
-        double h = this.hauteur();
-        double x = h - fr*h;
-        Point d = new Point (ha, ho - x);
-        Point g = new Point (ba, bo);
+    void casserHaut(int fr) {
+        int ha = this.enHautADroite.getAbscisse();
+        int ba = this.enBasAGauche.getAbscisse();
+        int ho = this.enHautADroite.getOrdonnee();
+        int bo = this.enBasAGauche.getOrdonnee();
+        int l = this.largeur();
+        int h = this.hauteur();
+        int x = h - fr*h;
+        //Point d = new Point (ha, ho - x);
+        //Point g = new Point (ba, bo);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -207,19 +154,26 @@ class Iceberg2D {
      * Casser une partie en bas
      * @param fr dans ]0..1[ : définit le pourcentage supprimé
      */
-    public void casserBas(double fr) {
-        double ha = this.enHautADroite.getAbscisse();
-        double ba = this.enBasAGauche.getAbscisse();
-        double ho = this.enHautADroite.getOrdonnee();
-        double bo = this.enBasAGauche.getOrdonnee();
-        double l = this.largeur();
-        double h = this.hauteur();
-        double x = h - fr*h;
-        Point d = new Point (ha, ho);
-        Point g = new Point (ba, bo + x);
+    void casserBas(int fr) {
+        int ha = this.enHautADroite.getAbscisse();
+        int ba = this.enBasAGauche.getAbscisse();
+        int ho = this.enHautADroite.getOrdonnee();
+        int bo = this.enBasAGauche.getOrdonnee();
+        int l = this.largeur();
+        int h = this.hauteur();
+        int x = h - fr*h;
+        //Point d = new Point (ha, ho);
+        //Point g = new Point (ba, bo + x);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
 
 
+}
+
+
+
+class Main {
+    public static void main(String chat[]){
+    }
 }

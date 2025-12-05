@@ -25,9 +25,19 @@ def test_erreur():
     assert(verif == False)
 
 
+def test_POO():
+    fichier = "./fichier_test_jura/test4.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    # print(parseur.tokens)
+    verif = parseur.verif_file()
+    assert(verif == True)
+
+
 def test_plusieurs_class_avant_Main():
     fichier = "./fichier_test_jura/test5.txt"
-    parseur = Parseur(lexeur(fichier))
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
     assert(verif == True)
@@ -44,6 +54,8 @@ if __name__ == "__main__":
     test_class_Main() #1
     test_class_mainetMain() #2
     test_erreur() #3
+    print("CHAGEMEEEEEEEEEEEEEEEEEEEEEEEEEENT")
+    test_POO() #4
     test_plusieurs_class_avant_Main() #5
     test_operations() #6
     print("les tests sont passés\n")

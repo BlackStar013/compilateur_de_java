@@ -187,12 +187,15 @@ class Parseur:
         token = self.lire()
         if(token[0] == ","):
             return self.verif_params()
+        else:
+            self.reculer(1)
         return True
 
     def verif_type(self):
         print("passage verif_type")
         token = self.lire()
-        if(token[1] == "boolean" or token[1] == "int" or token[1] == "ident"):
+
+        if(token[0] == "boolean" or token[0] == "int" or token[1] == "ident"):
             return True
         return False
 
@@ -516,7 +519,7 @@ class Parseur:
                         token = self.lire()
                         return(token[0] )== ";"
             #######################ON POURRAIT LES REGROUPER AVEC UN TRUC EN MODE {token[1]}
-            case "true" | "false" | "this " | "new",_:
+            case "true" | "false" | "this" | "new",_:
                 if self.verif_expr_bis():
                     token = self.lire()
                     return(token[0] )== ";"
