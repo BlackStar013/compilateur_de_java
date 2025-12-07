@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 class Node:
-    def __init__(self,nom, parent=None, fils=None):
+    def __init__(self,nom, fils=None, parent=None):
         '''
         nom: string avec l'étiquette \n
         fils: liste de noeuds fils \n
@@ -31,22 +31,22 @@ class Node:
 
 class File(Node):
     def __init__(self, main, classes=None):
-        super().__init__("File", None, list((classes, main)))
+        super().__init__("File", [main, classes])
 
 class Classes(Node):
-    def __init__(self):
-        super().__init__("Classes", None, list())
+    def __init__(self,fils=None, parent=None):
+        super().__init__("Classes", fils, parent)
 
 class Class(Node):
-    def __init__(self, ident):
-        super().__init__("Class", None, [Node(ident,self)])
+    def __init__(self, ident, fils=None):
+        super().__init__("Class", [Node(ident,self)]+fils)
 
 class Decl(Node):
     pass
 
 class Decl_block(Node):
     def __init__(self):
-        super().__init__("Decl_block", None, list())
+        super().__init__("Decl_block", list())
 
 class Decl_suffix(Node):
     pass
@@ -55,11 +55,12 @@ class Decl_ident(Node):
 
 class Param_block(Node):
     def __init__(self):
-        super().__init__("Param_block", None, list())
+        super().__init__("Param_block", list())
 
 class Param(Node):
     def __init__(self, ident, type):
-        super().__init__("Param",None,[Node(type, self),Node(ident,self)])
+        super().__init__("Param")
+        self.add_list_fils = [Node(type, None, self),Node(ident, None, self)]
 
 class Params_bis(Node):
     pass
