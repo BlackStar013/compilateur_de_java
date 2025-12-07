@@ -291,7 +291,7 @@ class Parseur:
             if next_token[0] == ")" :
                 if self.verif_expr_N8() :
                     return True 
-                else :
+                else :  # Il faudrait reculer de l'ensemble des éléments testés dans self.verif_expr_N8
                     self.reculer(1)
             else : 
                 self.reculer(1)
