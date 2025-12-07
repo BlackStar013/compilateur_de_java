@@ -289,7 +289,10 @@ class Parseur:
         if maybe_type :
             next_token = self.lire() 
             if next_token[0] == ")" :
-                return self.verif_expr_N8()
+                if self.verif_expr_N8() :
+                    return True 
+                else :
+                    self.reculer(1)
             else : 
                 self.reculer(1)
         self.reculer(1)
