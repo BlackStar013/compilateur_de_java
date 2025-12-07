@@ -317,7 +317,7 @@ class Parseur:
                     return True 
                 else :  # Il faut reculer de l'ensemble des éléments testés dans self.verif_expr_N8
                     new_pos = self.pos
-                    self.reculer(new_pos - save_pos)
+                    self.reculer(new_pos - save_pos - 1)
             else : 
                 self.reculer(1)
         self.reculer(1)
