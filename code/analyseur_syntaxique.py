@@ -283,10 +283,10 @@ class Parseur:
     
     def verif_expr_parenthese(self) : 
         token = self.lire()
-        type = False
-        if (token[0] in ["boolean', int"] or token[1] == "ident") :
-            type = True 
-        if type :
+        maybe_type = False
+        if (token[0] in ["boolean", "int"] or token[1] == "ident") :
+            maybe_type = True 
+        if maybe_type :
             next_token = self.lire() 
             if next_token[0] == ")" :
                 return self.verif_expr_N8()
