@@ -281,7 +281,26 @@ class Parseur:
             case _, "ident" :
                 return True 
     
-   # def verif_expr_parenthese(self) :  cas à compléter 2
+    def verif_expr_parenthese(self) : 
+        token = self.lire()
+        type = False
+        if (token[0] in ["boolean', int"] or token[1] == "ident") :
+            type = True 
+        if type :
+            next_token = self.lire() 
+            if next_token[0] == ")" :
+                return self.verif_expr_N8()
+            else : 
+                self.reculer(1)
+        self.reculer(1)
+        if self.verif_expr() :
+            token = self.lire()
+            if token[0] == ")" :
+                return True 
+            else :
+                return False 
+        else :
+            return False
         
     def verif_expr_bis(self) :
         return (self.verif_expr_N9_bis() and self.verif_expr_N7_bis() and self.verif_expr_N6_bis() and self.verif_expr_N5_bis() and self.verif_expr_N4_bis() and self.verif_expr_N3_bis() and self.verif_expr_N2_bis() and self.verif_expr_N1_bis())
