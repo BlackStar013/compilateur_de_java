@@ -1,10 +1,33 @@
 n = 0
 class Parseur:
-    def lire(self): #A RETIRER
-        return
+    def __init__(self, tokens):
+        self.tokens = tokens
+        self.pos = -1
+        self.token = tokens[self.pos]
 
-    def reculer(self,n):    
-        return
+    def lire(self): 
+        '''
+        avance au token suivant
+        '''
+        self.pos += 1
+        if self.pos < len(self.tokens):
+            self.token = self.tokens[self.pos]
+        else:
+            self.token = ('EOF', 'EOF')
+
+        return self.token
+
+    def reculer(self, n):
+        '''
+        recule de n tokens
+        '''
+        if n >= self.pos:
+            pass #erreur, on ne peut pas reculer autant
+        self.pos -= n
+        self.token = self.tokens[self.pos]
+
+        return self.token
+
     #################################
 
     def verif_file(self):
@@ -282,6 +305,7 @@ class Parseur:
                 return True 
     
     def verif_expr_parenthese(self) : 
+        save_pos = self.pos
         token = self.lire()
         maybe_type = False
         if (token[0] in ["boolean", "int"] or token[1] == "ident") :
@@ -291,8 +315,9 @@ class Parseur:
             if next_token[0] == ")" :
                 if self.verif_expr_N8() :
                     return True 
-                else :  # Il faudrait reculer de l'ensemble des éléments testés dans self.verif_expr_N8
-                    self.reculer(1)
+                else :  # Il faut reculer de l'ensemble des éléments testés dans self.verif_expr_N8
+                    new_pos = self.pos
+                    self.reculer(new_pos - save_pos)
             else : 
                 self.reculer(1)
         self.reculer(1)
