@@ -439,6 +439,32 @@ class Parseur:
     
     
    # def verif_expr_parenthese(self) :  cas à compléter 2
+    def verif_expr_parenthese(self) : 
+        save_pos = self.pos
+        token = self.lire()
+        maybe_type = False
+        if (token[0] in ["boolean", "int"] or token[1] == "ident") :
+            maybe_type = True 
+        if maybe_type :
+            next_token = self.lire() 
+            if next_token[0] == ")" :
+                if self.verif_expr_N8() :
+                    return True 
+                else :  # Il faut reculer de l'ensemble des éléments testés dans self.verif_expr_N8
+                    new_pos = self.pos
+                    self.reculer(new_pos - save_pos - 1)
+            else : 
+                self.reculer(1)
+        self.reculer(1)
+        if self.verif_expr() :
+            token = self.lire()
+            if token[0] == ")" :
+                return True 
+            else :
+                return False 
+        else :
+            return False
+
         
     def verif_expr_bis(self) :
         print("passage verif_expr_bis")

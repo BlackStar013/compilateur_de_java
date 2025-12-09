@@ -26,7 +26,7 @@ def test_erreur():
 
 
 def test_POO():
-    fichier = "./fichier_test_jura/test4.txt"
+    fichier = "./fichier_test_jura/test4.txt" #test de this + parenthèses + if + commentaires + plus fonctions avant main...
     lex = lexeur(fichier)
     parseur = Parseur(lex)
     # print(parseur.tokens)

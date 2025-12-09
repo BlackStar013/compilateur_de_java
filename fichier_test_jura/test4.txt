@@ -75,7 +75,7 @@ class Iceberg2D {
     void centre() {
         int hauteur = this.hauteur()/2 ;
         int largeur = this.largeur()/2;
-        //Point pt = new Point(this.enBasAGauche.getAbscisse() + largeur, this.enBasAGauche.getOrdonnee() + hauteur);
+        Point pt = new Point(this.enBasAGauche.getAbscisse() + largeur, this.enBasAGauche.getOrdonnee() + hauteur);
     }
 
     /** Réduction dans les quatre directions ; le centre ne bouge pas
@@ -88,10 +88,10 @@ class Iceberg2D {
         int bo = this.enBasAGauche.getOrdonnee();
         int l = this.largeur();
         int h = this.hauteur();
-        //int delta = 4*l*l + 4*h*h + l*h*(8-16*(1-fr));
-        //int x = (2*(l+h)+Math.sqrt(delta))/8;
-        //Point g = new Point (ha - x, ho - x);
-        //Point d = new Point (ba + x, bo + x);
+        int delta = 4*l*l + 4*h*h + l*h*(8-16*(1-fr));
+        int x = (2*(l+h)+Math.sqrt(delta))/8;
+        Point g = new Point (ha - x, ho - x);
+        Point d = new Point (ba + x, bo + x);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -108,8 +108,8 @@ class Iceberg2D {
         int l = this.largeur();
         int h = this.hauteur();
         int x = l - fr*l;
-        //Point d = new Point (ha - x, ho);
-        //Point g = new Point (ba, bo);
+        Point d = new Point (ha - x, ho);
+        Point g = new Point (ba, bo);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -126,8 +126,8 @@ class Iceberg2D {
         int l = this.largeur();
         int h = this.hauteur();
         int x = l - fr*l;
-        //Point d = new Point (ha, ho);
-        //Point g = new Point (ba + x, bo);
+        Point d = new Point (ha, ho);
+        Point g = new Point (ba + x, bo);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -144,8 +144,8 @@ class Iceberg2D {
         int l = this.largeur();
         int h = this.hauteur();
         int x = h - fr*h;
-        //Point d = new Point (ha, ho - x);
-        //Point g = new Point (ba, bo);
+        Point d = new Point (ha, ho - x);
+        Point g = new Point (ba, bo);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -162,8 +162,8 @@ class Iceberg2D {
         int l = this.largeur();
         int h = this.hauteur();
         int x = h - fr*h;
-        //Point d = new Point (ha, ho);
-        //Point g = new Point (ba, bo + x);
+        Point d = new Point (ha, ho);
+        Point g = new Point (ba, bo + x);
         this.enBasAGauche = g;
         this.enHautADroite = d;
     }
@@ -175,5 +175,6 @@ class Iceberg2D {
 
 class Main {
     public static void main(String chat[]){
+        return(1);
     }
 }
