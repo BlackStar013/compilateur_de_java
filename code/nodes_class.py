@@ -77,9 +77,9 @@ class Param(Node) :
 
 # Stmt
 
-class Stmtes(Node) : 
+class StmtBlock(Node) : 
     def __init__(self, stmts) :
-        super().__init__("Stmtes", fils=stmts)
+        super().__init__("StmtBlock", fils=stmts)
 
 class If(Node) : # if (<expr>) <stmt> (else <stmt>)?
     def __init__(self, cond, then_stmt, else_stmt=None) :
