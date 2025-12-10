@@ -30,7 +30,8 @@ class Node:
             return f"{self.type}({self.valeur})"
         return f"{self.valeur}"
         
-        
+
+# Structures <file>, <class>, <decl>
 
 class File(Node):
     def __init__(self, main, classes=None):
@@ -73,6 +74,47 @@ class Param(Node) :
         super().__init__("Param", valeur=name)
         self.type_name = type_name
 
+
+# Stmt
+
+class Stmtes(Node) : 
+    def __init__(self, stmts) :
+        super.__init__("Stmtes", fils=stmts)
+
+class If(Node) : # if (<expr>) <stmt> (else <stmt>)?
+    def __init__(self, cond, then_stmt, else_stmt=None) :
+        fils = [cond, then_stmt]
+        if else_stmt :
+            fils.append(else_stmt)
+        super().__init__("If", fils=fils)
+
+class For(Node) : # for (<expr>?; <expr>?; <expr>?) <stmt>
+    def __init__(self, init, cond, maj, body) : # peut être mettre init cond et maj par défaut à None
+        fils = [init, cond, maj, body]
+        super().__init__("For", fils=fils)
+
+class Return(Node) :
+    def __init__(self, expr=None) :
+        fils = None
+        if expr :
+            fils = [expr]
+        super().__init__("Return", fils=fils)
+
+class DeclVar(Node) : # <type> <ident> (= <expr>)? ;
+    def __init__(self, type_name, name, expr=None) :
+        fils = None 
+        if expr :
+            fils = [expr]
+        super().__init__("DeclVar", valeur=name, fils=fils)
+        self.type_name = type_name
+
+class ExprStmt(Node) : # <expr> ;
+    def __init__(self, expr) :
+        super().__init__("Expr", fils = [expr])
+
+class EmptyStmt(Node) : # ;
+    def __init__(self) :
+        super().__init__("Empty")
 
 
 # class Decl(Node):
@@ -146,8 +188,6 @@ class Param(Node) :
 # class Lexpr_bis(Node):
 #     pass
 # class Stmt(Node):
-#     pass
-# class Stmtes(Node):
 #     pass
 # class Stmt_type(Node):
 #     pass
