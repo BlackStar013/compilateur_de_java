@@ -98,6 +98,7 @@ class Parseur:
                                 token = self.lire()
                                 if token[0] != "}":
                                     return False
+                            return True
             case("boolean",_):
                 token = self.lire()
                 if(token[1] == "ident"):
@@ -116,7 +117,7 @@ class Parseur:
         print("passage verif_decles")
         var = True
         while var:
-            i = self.pos ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
+            i = self.pos 
             var = self.verif_decl()
         self.pos = i
         return True
@@ -186,12 +187,15 @@ class Parseur:
         token = self.lire()
         if(token[0] == ","):
             return self.verif_params()
+        else:
+            self.reculer(1)
         return True
 
     def verif_type(self):
         print("passage verif_type")
         token = self.lire()
-        if(token[1] == "boolean" or token[1] == "int" or token[1] == "ident"):
+
+        if(token[0] == "boolean" or token[0] == "int" or token[1] == "ident"):
             return True
         return False
 
@@ -343,7 +347,7 @@ class Parseur:
         match token[0] :
             case "*" :
                 return (self.verif_expr_N8() and self.verif_expr_N7_bis())
-            case "//" :
+            case "/" :
                 return (self.verif_expr_N8() and self.verif_expr_N7_bis())
             case "%" :
                 return (self.verif_expr_N8() and self.verif_expr_N7_bis())
@@ -407,7 +411,7 @@ class Parseur:
         match token[0], token[1] :
             case _, "integer" :
                 return True 
-            case _, "string" :
+            case _, "mot" :
                 return True 
             case "true", _ :
                 return True
@@ -435,6 +439,32 @@ class Parseur:
     
     
    # def verif_expr_parenthese(self) :  cas à compléter 2
+    def verif_expr_parenthese(self) : 
+        save_pos = self.pos
+        token = self.lire()
+        maybe_type = False
+        if (token[0] in ["boolean", "int"] or token[1] == "ident") :
+            maybe_type = True 
+        if maybe_type :
+            next_token = self.lire() 
+            if next_token[0] == ")" :
+                if self.verif_expr_N8() :
+                    return True 
+                else :  # Il faut reculer de l'ensemble des éléments testés dans self.verif_expr_N8
+                    new_pos = self.pos
+                    self.reculer(new_pos - save_pos - 1)
+            else : 
+                self.reculer(1)
+        self.reculer(1)
+        if self.verif_expr() :
+            token = self.lire()
+            if token[0] == ")" :
+                return True 
+            else :
+                return False 
+        else :
+            return False
+
         
     def verif_expr_bis(self) :
         print("passage verif_expr_bis")
@@ -515,7 +545,7 @@ class Parseur:
                         token = self.lire()
                         return(token[0] )== ";"
             #######################ON POURRAIT LES REGROUPER AVEC UN TRUC EN MODE {token[1]}
-            case "true" | "false" | "this " | "new",_:
+            case "true" | "false" | "this" | "new",_:
                 if self.verif_expr_bis():
                     token = self.lire()
                     return(token[0] )== ";"
