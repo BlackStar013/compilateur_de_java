@@ -1,0 +1,8 @@
+class Main {
+    public static void main(String chat[]){
+        int a = 0;
+        boolean peau = true;
+        if(peau a = 3;
+        return a;
+    }
+}

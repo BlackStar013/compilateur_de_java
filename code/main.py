@@ -1,8 +1,8 @@
 from lexeur import *
-from analyseur_syntaxique import *  
-
+from erreurs_included import *
 def main():
-    fichier = sys.argv[1]
+    # fichier = sys.argv[1]
+    fichier = "fichier_test_jura/test7.txt"
     L = lexeur(fichier)
     analyseur = Parseur(L)
     var = analyseur.verif_file()
