@@ -142,6 +142,38 @@ test_erreur:
   variables:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
+test_fichierpoo:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_fichierpoo --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_multiplesclass_extends:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_multiplesclass_extends --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_if_else:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_if_else --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
 
 #clean-job:
 #  - stage: clean
