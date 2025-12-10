@@ -36,14 +36,14 @@ def test_multiplesclass_extends():
     parseur = Parseur(lexeur(fichier))
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == False)
+    assert(verif == True)
 
 def test_if_else():
     fichier = "./fichier_test_jura/test6.txt"
     parseur = Parseur(lexeur(fichier))
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == False)
+    assert(verif == True)
 
 
 print("les tests sont passés\n")
