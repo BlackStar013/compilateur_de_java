@@ -2,15 +2,16 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 class Node:
-    def __init__(self,nom, fils=None, parent=None):
+    def __init__(self, type_noeud, valeur=None, fils=None):
         '''
         nom: string avec l'étiquette \n
         fils: liste de noeuds fils \n
         parent: noeud parent
         '''
-        self.nom = nom 
-        self.parent = parent
+        self.type = type_noeud
+        self.valeur = valeur
         self.fils = fils
+        self.parent = None
 
     def add_fils(self, node_f):
         if self.fils is None:
@@ -25,21 +26,36 @@ class Node:
         self.parent = node_p
 
     def afficher(self):
-        print(self.nom)
+        if self.valeur :
+            return f"{self.type}({self.valeur})"
+        return f"{self.valeur}"
         
         
 
 class File(Node):
     def __init__(self, main, classes=None):
-        super().__init__("File", [main, classes])
+        super().__init__("File", fils=classes + [main])
 
-class Classes(Node):
-    def __init__(self,fils=None, parent=None):
-        super().__init__("Classes", fils, parent)
+# class Classes(Node):
+#     def __init__(self,fils=None, parent=None):
+#         super().__init__("Classes", fils, parent)
 
 class Class(Node):
-    def __init__(self, ident, fils=None):
-        super().__init__("Class", [Node(ident,self)]+fils)
+    def __init__(self, ident, extends, decles):
+        super().__init__("Class", valeur=ident, fils=decles)
+        self.extends = extends
+
+class Class_Main(Node):
+    def __init__(self, name, arg, body) :
+        super().__init__("MainClass", valeur=name, fils=body)
+        self.arg = arg
+
+# class Methode(Node) :
+#     def __init__(self, name, return_type, params, body) :
+#         super().__init__("Methode", valeur=name, fils=params + body)
+#         self.params = params 
+#         self.body = body 
+#         self.return_type = return_type
 
 class Decl(Node):
     pass
@@ -63,9 +79,6 @@ class Param(Node):
         self.add_list_fils = [Node(type, None, self),Node(ident, None, self)]
 
 class Params_bis(Node):
-    pass
-
-class Class_Main(Node):
     pass
 
 class Expr(Node):
