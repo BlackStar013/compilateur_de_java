@@ -93,19 +93,19 @@ class For(Node) : # for (<expr>?; <expr>?; <expr>?) <stmt>
         fils = [init, cond, maj, body]
         super().__init__("For", fils=fils)
 
-class Return(Node) :
+class Return(Node) : # return <expr>?
     def __init__(self, expr=None) :
         fils = None
         if expr :
             fils = [expr]
         super().__init__("Return", fils=fils)
 
-class DeclVar(Node) : # <type> <ident> (= <expr>)? ;
+class ExprVar(Node) : # <type> <ident> (= <expr>)? ;
     def __init__(self, type_name, name, expr=None) :
         fils = None 
         if expr :
             fils = [expr]
-        super().__init__("DeclVar", valeur=name, fils=fils)
+        super().__init__("ExprVar", valeur=name, fils=fils)
         self.type_name = type_name
 
 class ExprStmt(Node) : # <expr> ;
@@ -116,6 +116,23 @@ class EmptyStmt(Node) : # ;
     def __init__(self) :
         super().__init__("Empty")
 
+
+# Expression
+
+class Binop(Node) : # 2 à 7
+    def __init__(self, op, left, right) :
+        super().__init__("Binop", valeur=op, fils=[left, right])
+
+class Unop(Node) : # -, !
+    def __init__(self, op, expr) :
+        super().__init__("Unop", valeur=op, fils=[expr])
+
+class Instanceof(Node) : # instanceof <type> <expr_N5'> , mouette
+    def __init__(self, type_name, expr) :
+        super().__init__("Instanceof", valeur=type_name, fils=[expr])
+
+# class Parenthese(Node) : 
+#     def __init__(self,)
 
 # class Decl(Node):
 #     pass
