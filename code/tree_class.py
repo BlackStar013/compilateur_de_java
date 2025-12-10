@@ -50,12 +50,25 @@ class Class_Main(Node):
         super().__init__("MainClass", valeur=name, fils=body)
         self.arg = arg
 
-# class Methode(Node) :
-#     def __init__(self, name, return_type, params, body) :
-#         super().__init__("Methode", valeur=name, fils=params + body)
-#         self.params = params 
-#         self.body = body 
-#         self.return_type = return_type
+class Methode(Node) :
+    def __init__(self, name, return_type, params, body) :
+        super().__init__("Methode", valeur=name, fils=params + body)
+        self.params = params 
+        self.body = body 
+        self.return_type = return_type
+
+class Constructeur(Node) :
+    def __init__(self, name, params, body) :
+        super().__init__("Constructeur", valeur=name, fils=params + body)
+        self.params = params 
+        self.body = body
+
+class Param(Node) :
+    def __init__(self, type_name, name) :
+        super().__init__("Param", valeur=name)
+        self.type_name = type_name
+
+
 
 class Decl(Node):
     pass
