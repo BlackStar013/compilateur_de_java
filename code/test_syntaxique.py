@@ -24,5 +24,27 @@ def test_erreur():
     verif = parseur.verif_file()
     assert(verif == False)
 
+def test_fichierpoo():
+    fichier = "./fichier_test_jura/test4.txt"
+    parseur = Parseur(lexeur(fichier))
+    # print(parseur.tokens)
+    verif = parseur.verif_file()
+    assert(verif == True)
+
+def test_multiplesclass_extends():
+    fichier = "./fichier_test_jura/test5.txt"
+    parseur = Parseur(lexeur(fichier))
+    # print(parseur.tokens)
+    verif = parseur.verif_file()
+    assert(verif == False)
+
+def test_if_else():
+    fichier = "./fichier_test_jura/test6.txt"
+    parseur = Parseur(lexeur(fichier))
+    # print(parseur.tokens)
+    verif = parseur.verif_file()
+    assert(verif == False)
+
 
 print("les tests sont passés\n")
+
