@@ -79,7 +79,7 @@ class Param(Node) :
 
 class Stmtes(Node) : 
     def __init__(self, stmts) :
-        super.__init__("Stmtes", fils=stmts)
+        super().__init__("Stmtes", fils=stmts)
 
 class If(Node) : # if (<expr>) <stmt> (else <stmt>)?
     def __init__(self, cond, then_stmt, else_stmt=None) :
@@ -166,7 +166,7 @@ class AccesChamp(Node) : # pas sûr
 
 class Element(Node) : # <item> => <integer> | <string> | true | false | this | null
     def __init__(self, type_lit, val) :
-        super().__init__("Element", val=f"{type_lit}:{val}")
+        super().__init__("Element", valeur=f"{type_lit}:{val}")
 
 class Ident(Node) : # <item> => <ident>
     def __init__(self, name) :
