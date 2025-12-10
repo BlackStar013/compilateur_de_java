@@ -135,9 +135,34 @@ class Instanceof(Node) : # instanceof <type> <expr_N5'> , mouette
     def __init__(self, type_name, expr) :
         super().__init__("Instanceof", valeur=type_name, fils=[expr])
 
+class Cast(Node): # pas sûr
+    def __init__(self, target_type, expr):
+        # target_type : le nom du type vers lequel on convertit (ex: "int", "String")
+        # expr : le noeud AST de l'expression à convertir
+        super().__init__("Cast", valeur=target_type, fils=[expr])
+
 class New(Node) : # <item> => new <ident>(...)
     def __init__(self, name, args) :
         super().__init__("New", valeur=name, fils=args)
+
+class AppelMethode(Node) : # pas sûr
+
+    def __init__(self, obj, name, args) :
+        # obj : Le noeud de l'objet sur lequel on appelle la méthode.
+        # Si l'appel est "maMethode()", obj sera souvent un noeud "Literal:this" ou None.
+        # method_name : Le nom de la fonction (string)
+        # args : Liste des noeuds AST des arguments
+        fils = []
+        if obj :
+            fils = [obj]
+        fils = fils + args 
+        super().__init__("AppelMethode", valeur=name, fils=fils)
+
+class AccesChamp(Node) : # pas sûr
+    def __init__(self, obj, name) :
+        # obj : Le noeud de l'expression avant le point
+        # field_name : Le nom de l'attribut accédé (string)
+        super().__init__("AccesChamp", valeur=name, fils=[obj])
 
 class Element(Node) : # <item> => <integer> | <string> | true | false | this | null
     def __init__(self, type_lit, val) :
