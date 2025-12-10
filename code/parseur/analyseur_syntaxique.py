@@ -5,6 +5,7 @@ class Parseur:
         self.tokens = tokens
         self.pos = 0
         self.token = tokens[self.pos]
+        self.racine = None
 
     def lire(self): 
         '''
@@ -33,6 +34,7 @@ class Parseur:
     def verif_file(self):
         self.verif_classes()
         return(self.verif_class_main())
+    
         
 
     def verif_classes(self): #boucle while tant qu'on a un class
@@ -225,7 +227,7 @@ class Parseur:
                     token = self.lire()
                     return(token[0] )== ";"
             case "(", _:
-                if(self.verif_expr_parenthese() and self.verif_expr_bis):
+                if(self.verif_expr_parenthese() and self.verif_expr_bis()):
                     token = self.lire()
                     return(token[0] )== ";"
             case _,"ident":

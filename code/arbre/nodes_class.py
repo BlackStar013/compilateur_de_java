@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-
 class Node:
     def __init__(self,nom, fils=None, parent=None):
         '''
@@ -19,14 +16,17 @@ class Node:
         self.fils.append(node_f)
     
     def add_list_fils(self, list_f):
-        self.fils = list_f
+        if self.fils is None:
+            self.fils = list()
+
+        self.fils += list_f
     
     def set_parent(self, node_p):
         self.parent = node_p
 
     def afficher(self):
         print(self.nom)
-        
+    
         
 
 class File(Node):
@@ -39,7 +39,8 @@ class Classes(Node):
 
 class Class(Node):
     def __init__(self, ident, fils=None):
-        super().__init__("Class", [Node(ident,self)]+fils)
+        super().__init__("Class", [Node(ident,self)])
+        
 
 class Decl(Node):
     pass
