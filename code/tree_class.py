@@ -119,6 +119,10 @@ class EmptyStmt(Node) : # ;
 
 # Expression
 
+class Attribution(Node) : # <expr_N1'>
+    def __init__(self, left, right) :
+        super().__init__("Attribution", fils=[left, right])
+
 class Binop(Node) : # 2 à 7
     def __init__(self, op, left, right) :
         super().__init__("Binop", valeur=op, fils=[left, right])
@@ -131,8 +135,17 @@ class Instanceof(Node) : # instanceof <type> <expr_N5'> , mouette
     def __init__(self, type_name, expr) :
         super().__init__("Instanceof", valeur=type_name, fils=[expr])
 
-# class Parenthese(Node) : 
-#     def __init__(self,)
+class New(Node) : # <item> => new <ident>(...)
+    def __init__(self, name, args) :
+        super().__init__("New", valeur=name, fils=args)
+
+class Element(Node) : # <item> => <integer> | <string> | true | false | this | null
+    def __init__(self, type_lit, val) :
+        super().__init__("Element", val=f"{type_lit}:{val}")
+
+class Ident(Node) : # <item> => <ident>
+    def __init__(self, name) :
+        super().__init__("Ident", valeur=name) 
 
 # class Decl(Node):
 #     pass
