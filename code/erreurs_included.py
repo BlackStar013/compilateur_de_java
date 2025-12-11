@@ -253,6 +253,7 @@ class Parseur:
                                     if(token[0] == "("):
                                         token = self.lire()
                                         if(token[0] == "String"):
+                                            token = self.lire()
                                             if(token[1] == "ident"):
                                                 token = self.lire()
                                                 if(token[0] == "["):
