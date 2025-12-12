@@ -1,3 +1,3 @@
 env/
 .pytest_cache
-code/_pycache
+code/__pycache__/

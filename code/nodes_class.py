@@ -1,15 +1,10 @@
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-
 class Node:
-    def __init__(self, type_noeud, valeur=None, fils=None):
+    def __init__(self, name, fils=None):
         '''
-        nom: string avec l'étiquette \n
+        valeur: string avec l'étiquette \n
         fils: liste de noeuds fils \n
-        parent: noeud parent
         '''
-        self.type = type_noeud
-        self.valeur = valeur
+        self.name = name
         self.fils = fils
         self.parent = None
 
@@ -25,60 +20,78 @@ class Node:
     def set_parent(self, node_p):
         self.parent = node_p
 
-    def afficher(self):
-        if self.valeur :
-            return f"{self.type}({self.valeur})"
-        return f"{self.valeur}"
+    # def afficher(self):
+    #     if self.valeur :
+    #         return f"{self.type}({self.valeur})"
+    #     return f"{self.valeur}"
         
 
 # Structures <file>, <class>, <decl>
 
 class File(Node):
     def __init__(self, main, classes=None):
-        super().__init__("File", fils=classes + [main])
+        super().__init__("File", fils = [classes, main])
 
 # class Classes(Node):
 #     def __init__(self,fils=None, parent=None):
 #         super().__init__("Classes", fils, parent)
 
 class Class(Node):
-    def __init__(self, ident, extends, decles):
-        super().__init__("Class", valeur=ident, fils=decles)
-        self.extends = extends
+    def __init__(self, ident, decles, extends=None): # Revenir sur decles
+        fils = [Node(ident)]
+        if extends :
+            n_extends = Node(f"extends {extends}")
+            fils.append(n_extends)
+        fils.append(decles)
+        
+        super().__init__("Class", fils=fils)
 
 class Class_Main(Node):
-    def __init__(self, name, arg, body) :
-        super().__init__("MainClass", valeur=name, fils=body)
-        self.arg = arg
+    def __init__(self, ident, StmtBlock) :
+        fils = [Node(ident), StmtBlock]
+        super().__init__("MainClass", fils=fils)
 
 class Methode(Node) :
-    def __init__(self, name, return_type, params, body) :
-        super().__init__("Methode", valeur=name, fils=params + body)
-        self.return_type = return_type
-        self.params = params 
-        self.body = body 
+    def __init__(self, ident, return_type, StmtBlock, params=None) :
+        fils = [Node(return_type), Node(ident)]
+        if params :
+            fils.append(params)
+        fils.append(StmtBlock)
+        super().__init__("Methode", fils=fils)
 
 class Constructeur(Node) :
-    def __init__(self, name, params, body) :
-        super().__init__("Constructeur", valeur=name, fils=params + body)
-        self.params = params 
-        self.body = body
+    def __init__(self, ident, StmtBlock, params=None) :
+        fils = [Node(ident)]
+        if params :
+            fils.append(params)
+        fils.append(StmtBlock)
+        super().__init__("Constructeur", fils=fils)
 
 class Champ(Node) : # il s'agit de <decl> => <type> <ident> ;
-    def __init__(self, type_name, name) :
-        super().__init__("Champ", valeur=name)
-        self.type_name = type_name
+    def __init__(self, type_ident, ident) :
+        fils = [Node(type_ident), Node(ident)]
+        super().__init__("Champ", fils=fils)
+
+class ParamBlock(Node) :
+    def __init__(self, params) :
+        '''
+        params: liste de noeuds param ??? \n
+        '''
+        super().__init__("ParamBlock", fils=params)
 
 class Param(Node) :
-    def __init__(self, type_name, name) :
-        super().__init__("Param", valeur=name)
-        self.type_name = type_name
+    def __init__(self, type_ident, ident) :
+        fils = [Node(type_ident), Node(ident)]
+        super().__init__("Param", fils=fils)
 
 
 # Stmt
 
 class StmtBlock(Node) : 
     def __init__(self, stmts) :
+        '''
+        stmts: liste de noeuds \n
+        '''
         super().__init__("StmtBlock", fils=stmts)
 
 class If(Node) : # if (<expr>) <stmt> (else <stmt>)?
@@ -89,28 +102,27 @@ class If(Node) : # if (<expr>) <stmt> (else <stmt>)?
         super().__init__("If", fils=fils)
 
 class For(Node) : # for (<expr>?; <expr>?; <expr>?) <stmt>
-    def __init__(self, init, cond, maj, body) : # peut être mettre init cond et maj par défaut à None
-        fils = [init, cond, maj, body]
+    def __init__(self, init, cond, maj, StmtBlock) : # peut être mettre init cond et maj par défaut à None
+        fils = [init, cond, maj, StmtBlock]
         super().__init__("For", fils=fils)
 
-class Return(Node) : # return <expr>?
+class Return(Node) : # return <expr>? ;
     def __init__(self, expr=None) :
         fils = None
         if expr :
             fils = [expr]
         super().__init__("Return", fils=fils)
 
-class ExprVar(Node) : # <type> <ident> (= <expr>)? ;
-    def __init__(self, type_name, name, expr=None) :
-        fils = None 
+class ExprVar(Node) : #<stmt> -> <type> <ident> (= <expr>)? ;
+    def __init__(self, type_ident, ident, expr=None) :
+        fils = [Node(type_ident), Node(ident)] 
         if expr :
-            fils = [expr]
-        super().__init__("ExprVar", valeur=name, fils=fils)
-        self.type_name = type_name
+            fils.append(expr)
+        super().__init__("ExprVar", fils=fils)
 
 class ExprStmt(Node) : # <expr> ;
     def __init__(self, expr) :
-        super().__init__("Expr", fils = [expr])
+        super().__init__("Expr", fils=[expr])
 
 class EmptyStmt(Node) : # ;
     def __init__(self) :
