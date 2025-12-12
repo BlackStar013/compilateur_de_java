@@ -132,20 +132,23 @@ class EmptyStmt(Node) : # ;
 # Expression
 
 class Attribution(Node) : # <expr_N1'>
-    def __init__(self, left, right) :
-        super().__init__("Attribution", fils=[left, right])
+    def __init__(self, left_expr, right_expr) :
+        fils = [left_expr, right_expr]
+        super().__init__("Attribution", fils=fils)
 
 class Binop(Node) : # 2 à 7
-    def __init__(self, op, left, right) :
-        super().__init__("Binop", valeur=op, fils=[left, right])
+    def __init__(self, op, left_exp, right_exp) :
+        fils = [left_exp, right_exp]
+        super().__init__(op, fils=fils)
 
 class Unop(Node) : # -, !
     def __init__(self, op, expr) :
-        super().__init__("Unop", valeur=op, fils=[expr])
+        super().__init__(op, fils=[expr])
 
 class Instanceof(Node) : # instanceof <type> <expr_N5'> , mouette
-    def __init__(self, type_name, expr) :
-        super().__init__("Instanceof", valeur=type_name, fils=[expr])
+    def __init__(self, type, expr) :
+        fils = [expr, Node(type)]
+        super().__init__("Instanceof", fils=fils)
 
 class Cast(Node): # pas sûr
     def __init__(self, target_type, expr):
