@@ -89,13 +89,19 @@ def test_parenthese_if():
     assert(verif == False)
 
 
+def test_addition():
+    fichier = "./fichier_test_jura/test11.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    # print(parseur.tokens)
+    verif = parseur.verif_file()
+    assert(verif == False)
 
 
 if __name__ == "__main__":
     test_class_Main() #1
     test_class_mainetMain() #2
     test_erreur() #3
-    print("CHAGEMEEEEEEEEEEEEEEEEEEEEEEEEEENT")
     test_POO() #4
     test_plusieurs_class_avant_Main() #5
     test_operations() #6
@@ -103,4 +109,5 @@ if __name__ == "__main__":
     test_egal()#8
     test_crochet()#9
     test_parenthese_if()#10
+    test_addition()#11
     print("les tests sont passés\n")

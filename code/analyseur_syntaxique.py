@@ -241,7 +241,11 @@ class Parseur:
                                                                     if(token[0] == "}"):
                                                                         return True
                                                                 elif(token[0] == "}"):
-                                                                    return True
+                                                                    token = self.lire()
+                                                                    if(token[0] == "}"):
+                                                                        return True
+                                                                    else:
+                                                                        return False
         return False
 
     def verif_expr(self) :
@@ -535,15 +539,13 @@ class Parseur:
                 if(token[1] == "ident"):
                     return(self.verif_stmt_type())
             case _,"integer":
-                if self.verif_integer():
-                    if self.verif_expr_bis():
-                        token = self.lire()
-                        return(token[0] )== ";"
+                if self.verif_expr_bis():
+                    token = self.lire()
+                    return(token[0] )== ";"
             case _, "mot":
-                if self.verif_string():
-                    if self.verif_expr_bis():
-                        token = self.lire()
-                        return(token[0] )== ";"
+                if self.verif_expr_bis():
+                    token = self.lire()
+                    return(token[0] )== ";"
             #######################ON POURRAIT LES REGROUPER AVEC UN TRUC EN MODE {token[1]}
             case "true" | "false" | "this" | "new",_:
                 if self.verif_expr_bis():

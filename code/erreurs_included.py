@@ -20,7 +20,7 @@ class Parseur:
         if self.pos < len(self.tokens):
             self.token = self.tokens[self.pos]
         else:
-            self.token = ('EOF', 'EOF')
+            self.token = ('EOF', 'EOF', self.tokens[self.pos - 1][2])
 
         return self.token
 
@@ -36,6 +36,10 @@ class Parseur:
         return self.token
 
     #################################
+    def erreur(self, token_attendu, ligne):
+        self.nb_erreurs += 1
+        self.correct = False
+        print("Erreur :", token_attendu,  "est attendu ligne", ligne)
 
     def verif_file(self):
         print("passage verif_file")
@@ -50,10 +54,12 @@ class Parseur:
         var = True
         n = self.nb_erreurs
         while var:
+            actuel = self.correct
             i = self.pos
             self.verif_class()
             if(n != self.nb_erreurs):
                 var = False
+                self.correct = actuel
         self.pos = i
         self.nb_erreurs = n
         return True
@@ -62,48 +68,34 @@ class Parseur:
     def verif_class(self):
         print("passage verif_class")
         token = self.lire()
-        if token[0] == "class":
-            token = self.lire()
-            if token[1] == "ident":
-                if token[0] == "Main":
-                    token = self.reculer(2)
-                    self.correct =  False
-                    self.nb_erreurs += 1
-                    return
-                else:
-                    token = self.lire()
-                    if token[0] == "extends":
-                        token = self.lire()
-                        if token[1] != "ident":
-                            self.correct = False
-                            self.nb_erreurs += 1
-                            return
-                        token = self.lire()
-                    if token[0] == "{":
-                        if self.verif_decles():
-                            token = self.lire()
-                            if token[0] == "}":
-                                self.correct = True
-                                self.nb_erreurs += 1
-                                return
-                    else:
-                        print("erreur : {, ligne ", token[2])
-                        self.correct = False
-                        self.nb_erreurs += 1
-                        return
-            else:
-                print("erreur : ident, ligne ", token[2])
-                self.correct = False 
-                self.nb_erreurs += 1
-                return
-        else:
-            print("erreur : class, ligne ", token[2])
-            self.correct = False
+        if token[0] != "class":
+            self.erreur("class", token[2])
+        token = self.lire()
+        if token[1] != "ident":
+            self.erreur("ident", token[2])
+        if token[0] == "Main":
+            token = self.reculer(2)
+            self.correct =  False
             self.nb_erreurs += 1
             return
-        self.correct = False
-        self.nb_erreurs += 1
-        return("le fichier n'est pas juste")
+        else:
+            token = self.lire()
+            if token[0] == "extends":
+                token = self.lire()
+                if token[1] != "ident":
+                    self.erreur("ident", token[2])
+                token = self.lire()
+            if token[0] != "{":
+                self.erreur("{", token[2])
+            if self.verif_decles():
+                token = self.lire()
+                if token[0] != "}":
+                    self.erreur("}", token[2])
+            else:
+                token = self.lire()
+                if token != "}":
+                    self.erreur("}", token[2])
+        return
 
     def verif_decl(self):
         print("passage verif_decl")
@@ -111,49 +103,65 @@ class Parseur:
         match token[0], token[1]:
             case("void",_):
                 token = self.lire()
-                if (token[1]=="ident"):
+                if (token[1] != "ident"):
+                    self.erreur("ident", token[2])
+                token = self.lire()
+                if(token[0] != "("):
+                    self.erreur("(", token[2])
+                token = self.lire()
+                if(token[0] != ")"):
+                    token = self.reculer(1)
+                    if(not self.verif_params()):
+                        return                      
                     token = self.lire()
-                    if(token[0]=="("):
-                        token = self.lire()
-                        if(token[0]!=")"):
-                            token = self.reculer(1)
-                            if(not self.verif_params()):
-                                return False
-                            token = self.lire()
-                            if(token[0] != ")"):
-                                return False
-                        token = self.lire()
-                        if(token[0] == "{"):
-                            token = self.lire()
-                            if(token[0]!="}"):
-                                token = self.reculer(1)
-                                if not self.verif_stmtes():
-                                    return False
-                                token = self.lire()
-                                if token[0] != "}":
-                                    return False
-                            return True
+                    if(token[0] != ")"):
+                        self.erreur(")", token[2])
+                        return 
+                token = self.lire()
+                if(token[0] != "{"):
+                    self.erreur("{", token[2])
+                token = self.lire()
+                if(token[0] != "}"):
+                    token = self.reculer(1)
+                    if not self.verif_stmtes():
+                        return 
+                token = self.lire()
+                if token[0] != "}":
+                    self.erreur("}", token[2])
+                    return 
+                return 
             case("boolean",_):
                 token = self.lire()
-                if(token[1] == "ident"):
-                    return self.verif_decl_suffix()
-                return False
+                if(token[1] != "ident"):
+                    self.erreur("ident", token[2])
+                self.verif_decl_suffix()
+                return
             case("int",_):
                 token = self.lire()
-                if(token[1] == "ident"):
-                    return self.verif_decl_suffix()
+                if(token[1] != "ident"):
+                    self.erreur("ident", token[2])
+                self.verif_decl_suffix()
             case (_,"ident"): 
                 return(self.verif_decl_ident())
             case _:
-                return False
+                self.correct = False
+                self.nb_erreurs += 1
+                # self.erreur("decl", token[2])
+                return 
 
     def verif_decles(self):
         print("passage verif_decles")
         var = True
+        n = self.nb_erreurs
         while var:
-            i = self.pos 
-            var = self.verif_decl()
+            actuel = self.correct
+            i = self.pos
+            self.verif_decl() 
+            if n != self.nb_erreurs:
+                var = False
+                self.correct = actuel
         self.pos = i
+        self.nb_erreurs = n
         return True
 
 
@@ -162,25 +170,27 @@ class Parseur:
         token = self.lire()
         match token[0]:
             case ";":
-                return True
+                self.correct = self.correct and True
             case "(":
                 token = self.lire()
                 if(token[0]!=")"):
                     token = self.reculer(1)
                     if not self.verif_params():
-                        return False
+                        return
                     token = self.lire()
                     if token[0] != ")":
-                        return False
+                        self.erreur(")", token[2])
                     token = self.lire()
                 if token == "{":
                     self.verif_stmtes()
                     token = self.lire()
-                    if token[0] == "}":
-                        return True
-                return False
+                    if token[0] != "}":
+                        self.erreur("}", token[2])
+                    else:
+                        self.correct = self.correct and True
             case _ :
-                return False
+                self.erreur("; ou (", token[2])
+        return
 
     #prime devient bis
 
@@ -188,373 +198,373 @@ class Parseur:
         print("passage verif_decl_ident")
         token = self.lire()
         if(token[1] == "ident"):
-            return self.verif_decl_suffix()
+            self.verif_decl_suffix()
         elif(token[0] == "("):
             token = self.lire()
             if(token[0] != ")"):
                 token = self.reculer(1)
                 if(not self.verif_params()):
-                    return False
+                    return
                 token = self.lire()
                 if(token[0] != ")"):
-                    return False
+                    self.erreur(")", token[2])
+                    return
                 token = self.lire()
-                if(token[0] == "{"):
+                if(token[0] != "{"):
+                    self.erreur("{", token[2])
+                token = self.lire()
+                if(token[0]!="}"):
+                    token = self.reculer(1)
+                    if not self.verif_stmtes():
+                        return
                     token = self.lire()
-                    if(token[0]!="}"):
-                        token = self.reculer(1)
-                        if not self.verif_stmtes():
-                            return False
-                        token = self.lire()
-                        if token[0] != "}":
-                            return False
+                    if token[0] != "}":
+                        self.erreur("}", token[2])
+                        return 
 
     def verif_params(self):
         print("passage verif_params")
         if(self.verif_type()):
             token = self.lire()
-            if(token[1] == "ident"):
-                return self.verif_params_bis()
+            if(token[1] != "ident"):
+                self.erreur("ident", token[2])
+            self.verif_params_bis()
+            return 
 
     def verif_params_bis(self):
         print("passage verif_params_bis")
         token = self.lire()
         if(token[0] == ","):
-            return self.verif_params()
+            self.verif_params()
         else:
             self.reculer(1)
-        return True
+        self.correct = self.correct and True
+        return
 
     def verif_type(self):
         print("passage verif_type")
         token = self.lire()
 
         if(token[0] == "boolean" or token[0] == "int" or token[1] == "ident"):
-            return True
-        return False
+            self.correct = self.correct and True
+            return 
+        self.erreur("boolean ou int ou un ident", token[2])
+        return 
 
     def verif_class_Main(self):
         print("passage verif_class_Main")
         token = self.lire()
-        if(token[0] == "class"):
+        if(token[0] != "class"):
+            self.erreur("class", token[2])
+        token = self.lire()
+        if(token[0] != "Main"):
+            self.erreur("Main", token[2])
+        token = self.lire()
+        if(token[0] != "{"):
+            self.erreur("{", token[2])
+        token = self.lire()
+        if(token[0] != "public"):
+            self.erreur("public", token[2])
+        token = self.lire()
+        if(token[0] != "static"):
+            self.erreur("static", token[2])
+        token = self.lire()
+        if(token[0] != "void"):
+            self.erreur("void", token[2])
+        token = self.lire()
+        if(token[0] != "main"):
+            self.erreur("main", token[2])
+        token = self.lire()
+        if(token[0] != "("):
+            self.erreur("(", token[2])
+        token = self.lire()
+        if(token[0] != "String"):
+            self.erreur("String", token[2])
+        token = self.lire()
+        if(token[1] != "ident"):
+            self.erreur("ident", token[2])
+        token = self.lire()
+        if(token[0] != "["):
+            self.erreur("[", token[2])
+        token = self.lire()
+        if(token[0] != "]"):
+            self.erreur("]", token[2])
+        token = self.lire()
+        if(token[0] != ")"):
+            self.erreur(")", token[2])
+        token = self.lire()
+        if(token[0] != "{"):
+            self.erreur("{", token[2])                   
+        token = self.lire()
+        if(token[0]!="}"):
+            token = self.reculer(1)
+            if not self.verif_stmtes():
+                 return
             token = self.lire()
-            if(token[0] == "Main"):
-                token = self.lire()
-                if(token[0] == "{"):
-                    token = self.lire()
-                    if(token[0] == "public"):
-                        token = self.lire()
-                        if(token[0] == "static"):
-                            token = self.lire()
-                            if(token[0] == "void"):
-                                token = self.lire()
-                                if(token[0] == "main"):
-                                    token = self.lire()
-                                    if(token[0] == "("):
-                                        token = self.lire()
-                                        if(token[0] == "String"):
-                                            token = self.lire()
-                                            if(token[1] == "ident"):
-                                                token = self.lire()
-                                                if(token[0] == "["):
-                                                    token = self.lire()
-                                                    if(token[0] == "]"):
-                                                        token = self.lire()
-                                                        if(token[0] == ")"):
-                                                            token = self.lire()
-                                                            if(token[0] == "{"):
-                                                                token = self.lire()
-                                                                if(token[0]!="}"):
-                                                                    token = self.reculer(1)
-                                                                    if not self.verif_stmtes():
-                                                                        self.correct =False
-                                                                        return
-                                                                    token = self.lire()
-                                                                    if token[0] != "}":
-                                                                        print("erreur : } est attendu ligne", token[2])
-                                                                        self.correct = False
-                                                                        self.nb_erreurs += 1
-                                                                        return
-                                                                    token = self.lire()
-                                                                    if(token[0] == "}"):
-                                                                        self.correct = True
-                                                                    else:
-                                                                        print("erreur : } est attendu ligne", token[2])
-                                                                        self.correct = False
-                                                                        self.nb_erreurs += 1
-                                                                        return
-                                                                elif(token[0] == "}"):
-                                                                    self.correct = True
-                                                                else:
-                                                                    print("erreur : } est attendu ligne", token[2])
-                                                                    self.correct = False
-                                                                    self.nb_erreurs += 1
-                                                                    return
-                                                            else:
-                                                                print("erreur : { est attendu ligne", token[2])
-                                                                self.correct = False
-                                                                self.nb_erreurs += 1
-                                                                return
-                                                        else:
-                                                            print("erreur : ) est attendu ligne", token[2])
-                                                            self.correct = False
-                                                            self.nb_erreurs += 1
-                                                            return
-                                                    else:
-                                                        print("erreur : ] est attendu ligne", token[2])
-                                                        self.correct = False
-                                                        self.nb_erreurs += 1
-                                                        return
-                                                else:
-                                                    print("erreur : [ est attendu ligne", token[2])
-                                                    self.correct = False
-                                                    self.nb_erreurs += 1
-                                                    return
-                                            else:
-                                                print("erreur : ident est attendu ligne", token[2])
-                                                self.correct = False
-                                                self.nb_erreurs += 1
-                                                return
-                                        else:
-                                            print("erreur : String est attendu ligne", token[2])
-                                            self.correct = False
-                                            self.nb_erreurs += 1
-                                            return
-                                    else:
-                                        print("erreur : ( est attendu ligne", token[2])
-                                        self.correct = False
-                                        self.nb_erreurs += 1
-                                        return
-                                else:
-                                    print("erreur : main est attendu ligne", token[2])
-                                    self.correct = False
-                                    self.nb_erreurs += 1
-                                    return
-                            else:
-                                print("erreur : void est attendu ligne", token[2])
-                                self.correct = False
-                                self.nb_erreurs += 1
-                                return
-                        else:
-                            print("erreur : static est attendu ligne", token[2])
-                            self.correct = False
-                            self.nb_erreurs += 1
-                            return
-                    else:
-                        print("erreur : public est attendu ligne", token[2])
-                        self.correct = False
-                        self.nb_erreurs += 1
-                        return
-                else:
-                    print("erreur : { est attendu ligne", token[2])
-                    self.correct = False
-                    self.nb_erreurs += 1
-                    return
-            else:
-                print("erreur : Main est attendu ligne", token[2])
-                self.correct = False
-                self.nb_erreurs += 1
-                return        
-        else:
-            print("erreur : class est attendu ligne", token[2])
-            self.correct = False
-            self.nb_erreurs += 1
-            return
+            if token[0] != "}":
+                self.erreur("}", token[2])
+                return
+            token = self.lire()
+            if(token[0] == "}"):
+                self.correct = self.correct and True
+        elif(token[0] == "}"):
+            token = self.lire()
+            if(token[0] != "}"):
+                self.erreur("}",token[2])
+            self.correct = self.correct and True
         return 
+
 
     def verif_expr(self) :
         print("passage verif_expr")
-        return (self.verif_expr_N2() and self.verif_expr_N1_bis())
+        self.verif_expr_N2()
+        self.verif_expr_N1_bis()
+        return
     
     def verif_expr_N1_bis(self) :
         print("passage verif_expr_N1_bis")
         token = self.lire()
-        if token[0] == '=' :
-            return(self.verif_expr())
-        else :
-            token = self.reculer(1)
-            return True 
+        if token[0] != '=' :
+            self.reculer(1)
+            return
+        self.verif_expr()
+        return
         
     def verif_expr_N2(self) :
         print("passage verif_expr_N2")
-        return (self.verif_expr_N3() and self.verif_expr_N2_bis())
+        self.verif_expr_N3()
+        self.verif_expr_N2_bis()
+        return
     
     def verif_expr_N2_bis(self) :
         print("passage verif_expr_N2_bis")
         token = self.lire()
         if token[0] == '||' :
-            return(self.verif_expr_N3() and self.verif_expr_N2_bis())
+            self.verif_expr_N3()
+            self.verif_expr_N2_bis()
+            return
         else :
             token = self.reculer(1)
-            return True 
+            return 
+     
         
     def verif_expr_N3(self) :
         print("passage verif_expr_N3")
-        return (self.verif_expr_N4() and self.verif_expr_N3_bis())
+        self.verif_expr_N4()
+        self.verif_expr_N3_bis()
+        return 
     
     def verif_expr_N3_bis(self) :
         print("passage verif_expr_N3_bis")
         token = self.lire()
         if token[0] == '&&' :
-            return (self.verif_expr_N4() and self.verif_expr_N3_bis())
+            self.verif_expr_N4()
+            self.verif_expr_N3_bis() 
         else :
             token = self.reculer(1)
-            return True
+        return 
         
     def verif_expr_N4(self) :
         print("passage verif_expr_N4")
-        return (self.verif_expr_N5() and self.verif_expr_N4_bis())
+        self.verif_expr_N5()
+        self.verif_expr_N4_bis()
+        return
     
     def verif_expr_N4_bis(self) :
         print("passage verif_expr_N4_bis")
         token = self.lire()
         match token[0] :
             case "==" :
-                return (self.verif_expr_N5() and self.verif_expr_N4_bis())
+                self.verif_expr_N5()
+                self.verif_expr_N4_bis()
+                return
             case "!=" :
-                return (self.verif_expr_N5() and self.verif_expr_N4_bis())
+                self.verif_expr_N5()
+                self.verif_expr_N4_bis()
+                return
             case _ :
                 token = self.reculer(1)
-                return True 
+                return 
             
     def verif_expr_N5(self) :
         print("passage verif_expr_N5")
-        return (self.verif_expr_N6() and self.verif_expr_N5_bis())
+        self.verif_expr_N6()
+        self.verif_expr_N5_bis()
+        return
     
     def verif_expr_N5_bis(self) :
         print("passage verif_expr_N5_bis")
         token = self.lire()
         match token[0] :
             case "<" :
-                return (self.verif_expr_N6() and self.verif_expr_N5_bis())
+                self.verif_expr_N6()
+                self.verif_expr_N5_bis()
+                return
             case "<=" :
-                return (self.verif_expr_N6() and self.verif_expr_N5_bis())
+                self.verif_expr_N6() 
+                self.verif_expr_N5_bis()
+                return
             case ">" :
-                return (self.verif_expr_N6() and self.verif_expr_N5_bis())
+                self.verif_expr_N6()
+                self.verif_expr_N5_bis()
+                return
             case ">=" :
-                return (self.verif_expr_N6() and self.verif_expr_N5_bis())
+                self.verif_expr_N6() 
+                self.verif_expr_N5_bis()
+                return
             case "instanceof" :
-                return (self.verif_type() and self.verif_expr_N5_bis())
+                self.verif_type()
+                self.verif_expr_N5_bis()
+                return
             case _ :
                 token = self.reculer(1)
                 return True 
             
     def verif_expr_N6(self) :
         print("passage verif_expr_N6")
-        return (self.verif_expr_N7() and self.verif_expr_N6_bis())
+        self.verif_expr_N7()
+        self.verif_expr_N6_bis()
+        return
     
     def verif_expr_N6_bis(self) :
         print("passage verif_expr_N6_bis")
         token = self.lire()
         match token[0] :
             case "+" :
-                return (self.verif_expr_N7() and self.verif_expr_N6_bis())
+                self.verif_expr_N7()
+                self.verif_expr_N6_bis()
+                return 
             case "-" :
-                return (self.verif_expr_N7() and self.verif_expr_N6_bis())
+                self.verif_expr_N7()
+                self.verif_expr_N6_bis()
+                return
             case _ :
                 token = self.reculer(1)
-                return True 
+                return  
     
     def verif_expr_N7(self) :
         print("passage verif_expr_N7")
-        return (self.verif_expr_N8() and self.verif_expr_N7_bis())
+        self.verif_expr_N8()
+        self.verif_expr_N7_bis()
+        return
     
     def verif_expr_N7_bis(self) :
         print("passage verif_expr_N7_bis")
         token = self.lire()
         match token[0] :
             case "*" :
-                return (self.verif_expr_N8() and self.verif_expr_N7_bis())
+                self.verif_expr_N8()
+                self.verif_expr_N7_bis()
+                return 
             case "/" :
-                return (self.verif_expr_N8() and self.verif_expr_N7_bis())
+                self.verif_expr_N8()
+                self.verif_expr_N7_bis()
+                return
             case "%" :
-                return (self.verif_expr_N8() and self.verif_expr_N7_bis())
+                self.verif_expr_N8()
+                self.verif_expr_N7_bis()
+                return
             case _ :
                 token = self.reculer(1)
-                return True 
+                return  
             
     def verif_expr_N8(self) :
         print("passage verif_expr_N8")
         token = self.lire()
         match token[0] :
             case "!" :
-                return (self.verif_expr_N8())
+                self.verif_expr_N8()
+                return
             case "-" :
-                return (self.verif_expr_N8())
+                self.verif_expr_N8()
+                return
             case "(" :
-                return (self.verif_expr_parenthese())
+                self.verif_expr_parenthese()
+                return
             case _ :
                 token = self.reculer(1)
-                return (self.verif_expr_N9())
+                self.verif_expr_N9()
+                return
 
     def verif_expr_N9(self) :
         print("passage verif_expr_N9")
-        return (self.verif_item() and self.verif_expr_N9_bis())
-    
+        self.verif_item()
+        self.verif_expr_N9_bis()
+        return 
+
+###########################################################JEN ETAIS A ICI
     def verif_expr_N9_bis(self) :
         print("passage verif_expr_N9_bis")
         token = self.lire()
         match token[0] :
             case "." :
                 token = self.lire()
-                if token[1] == "ident" :
-                    return self.verif_expr_ident()
-                return False
+                if token[1] != "ident" :
+                    self.erreur("ident", token[2])
+                self.verif_expr_ident()
+                return
             case "(" :
                 token = self.lire()
                 if token[0] != ")" :
                     token = self.reculer(1)
-                    if not self.verif_lexpr() :
-                        return False
+                    self.verif_lexpr()
                     token = self.lire()
-                if token[0] == ")" :
-                    return self.verif_expr_N9_bis()
-                return False 
+                if token[0] != ")" :
+                    self.erreur(")", token[2])
+                self.verif_expr_N9_bis()
+                return 
             case _ :
                 token = self.reculer(1)
-                return True
+                return
             
     def verif_expr_ident(self) :
         print("passage verif_expr_ident")
         token = self.lire()
         if token[0] == '=' :
-            return self.verif_expr()
+            self.verif_expr()
+            return
         else :
             token = self.reculer(1)
-            return self.verif_expr_N9_bis()
-        
+            self.verif_expr_N9_bis()
+            return
+    
+    ############################################################ je reprends a partir de la
     def verif_item(self) :
         print("passage verif_item")
         token = self.lire()
         match token[0], token[1] :
             case _, "integer" :
-                return True 
+                return
             case _, "mot" :
-                return True 
+                return 
             case "true", _ :
-                return True
+                return
             case "false", _ :
-                return True 
+                return 
             case "this", _ :
-                return True
+                return
             case "null", _ :
-                return True 
+                return 
             case "new", _ :
                 token = self.lire()
-                if token[1] == "ident" :
+                if token[1] != "ident" :
+                    self.erreur("ident", token[2])
+                token = self.lire()
+                if token[0] != "(" :   
+                    self.erreur("(", token[2])
+                token = self.lire()
+                if token[0] != ")" :
+                    token = self.reculer(1)
+                    if not self.verif_lexpr() :
+                        return
                     token = self.lire()
-                    if token[0] == "(" :   
-                        token = self.lire()
-                        if token[0] != ")" :
-                            token = self.reculer(1)
-                            if not self.verif_lexpr() :
-                                return False
-                            token = self.lire()
-                        if token[0] == ")" :
-                            return True 
+                    if token[0] != ")" :
+                        self.erreur(")", token[2])
+                        return 
             case _, "ident" :
-                return True 
+                return 
     
+    ################################################################"" Arreter ici pour Moi (à savoir moi), à finir
     
    # def verif_expr_parenthese(self) :  cas à compléter 2
     def verif_expr_parenthese(self) : 
@@ -586,122 +596,164 @@ class Parseur:
         
     def verif_expr_bis(self) :
         print("passage verif_expr_bis")
-        return (self.verif_expr_N9_bis() and self.verif_expr_N7_bis() and self.verif_expr_N6_bis() and self.verif_expr_N5_bis() and self.verif_expr_N4_bis() and self.verif_expr_N3_bis() and self.verif_expr_N2_bis() and self.verif_expr_N1_bis())
+        self.verif_expr_N9_bis()
+        self.verif_expr_N7_bis()
+        self.verif_expr_N6_bis()
+        self.verif_expr_N5_bis()
+        self.verif_expr_N4_bis()
+        self.verif_expr_N3_bis()
+        self.verif_expr_N2_bis()
+        self.verif_expr_N1_bis()
+        return
 
 
     def verif_lexpr(self):
         print("passage verif_lexpr")
-        return(self.verif_expr() and self.verif_lexpr_bis())
+        self.verif_expr()
+        self.verif_lexpr_bis()
+        return
 
     def verif_lexpr_bis(self):
         print("passage verif_lexpr_bis")
         token = self.lire()
         if token[0] == ",":
-            return(self.verif_lexpr())
+            self.verif_lexpr()
+            return
         else:
             token = self.reculer(1)
-            return True
+            return
         
     def verif_stmt(self):
         print("passage verif_stmt")
         token = self.lire()
         match token[0], token[1]:
             case ";", _ : 
-                return True
+                return
             case "if", _:
                 token = self.lire()
-                if token[0] == "(":
-                    if self.verif_expr():
-                        token = self.lire()
-                        if token[0] == ")":
-                            return(self.verif_stmt() and self.verif_stmt_if())
+                if token[0] != "(":
+                    self.erreur("(", token[2])
+                self.verif_expr()
+                token = self.lire()
+                if token[0] != ")":
+                    self.erreur(")", token[2])
+                self.verif_stmt()
+                self.verif_stmt_if()
+                return
             case "for", _:
                 token = self.lire()
-                if token[0] == "(":
-                    for i in range(2):
-                        if(token[0] != ";"):
-                            token = self.reculer(1)
-                            if not self.verif_expr():
-                                return False
-                        token = self.lire()
-                        if token[0] != ";":
-                            return False
-                        token = self.lire()
-                    
-                    if not token[0] == ")":
+                if token[0] != "(":
+                    self.erreur("(", token[2])
+                for i in range(2):
+                    if(token[0] != ";"):
                         token = self.reculer(1)
-                        if not self.verif_expr():
-                            return False
-                        token = self.lire()
-                    if token[0] == ")":
-                        return self.verif_stmt()
-            case "{", _:
-                if self.verif_stmtes():
+                        self.verif_expr()
                     token = self.lire()
-                    return(token[0] == "}")
+                    if token[0] != ";":
+                        self.erreur(";", token[2])
+                    token = self.lire()
+                
+                if not token[0] == ")":
+                    token = self.reculer(1)
+                    self.verif_expr()
+                    token = self.lire()
+                if token[0] == ")":
+                    self.verif_stmt()
+                return
+            case "{", _:
+                self.verif_stmtes()
+                token = self.lire()
+                if(token[0] != "}"):
+                    self.erreur("}", token[2])
+                return
             case "return", _:
                 token = self.lire()
                 if token[0] != ";":
                     token = self.reculer(1)
-                    if not(self.verif_expr()):
-                        return False
+                    self.verif_expr()
                     token = self.lire()
-                if token[0] == ";":
-                    return True
+                if token[0] != ";":
+                    self.erreur(";", token[2])
+                return
             case "boolean" | "int", _:
                 token = self.lire()
-                if(token[1] == "ident"):
-                    return(self.verif_stmt_type())
+                if(token[1] != "ident"):
+                    self.erreur("ident", token[2])
+                self.verif_stmt_type()
+                return
             case _,"integer":
-                if self.verif_integer():
-                    if self.verif_expr_bis():
-                        token = self.lire()
-                        return(token[0] )== ";"
+                self.verif_expr_bis()
+                token = self.lire()
+                if(token[2] != ";"):
+                    self.erreur(";", token[2])
+                return
             case _, "mot":
-                if self.verif_string():
-                    if self.verif_expr_bis():
-                        token = self.lire()
-                        return(token[0] )== ";"
+                self.verif_expr_bis()
+                token = self.lire()
+                if(token[0] != ";"):
+                    self.erreur(";", token[2])
+                return
             #######################ON POURRAIT LES REGROUPER AVEC UN TRUC EN MODE {token[1]}
             case "true" | "false" | "this" | "new",_:
-                if self.verif_expr_bis():
-                    token = self.lire()
-                    return(token[0] )== ";"
+                self.verif_expr_bis()
+                token = self.lire()
+                if(token[0] != ";"):
+                    self.erreur(";", token[2])
+                return
             case "new", _:
                 token = self.lire()
-                if(token[0] == "ident"):
+                if(token[0] != "ident"):
+                    self.erreur("ident", token[2])
+                token = self.lire()
+                if token[0] != "(":
+                    self.erreur("(", token[2])
+                token = self.lire()
+                if token[0] != ")":
+                    token = self.reculer(1)
+                    self.verif_expr()
                     token = self.lire()
-                    if token[0] == "(":
-                        token = self.lire()
-                        if token[0] != ")":
-                            token = self.reculer(1)
-                            if not(self.verif_expr()):
-                                return False
-                            token = self.lire()
-                        if token[0] == ")":
-                            if self.verif_expr_bis():
-                                token = self.lire()
-                                return(token[0] == ";")
+                if token[0] != ")":
+                    self.erreur(")", token[2])
+                self.verif_expr_bis()
+                token = self.lire()
+                if(token[0] != ";"):
+                    self.erreur(";", token[2])
+                return
             case "!" | "-",_:
-                if self.verif_expr():
-                    token = self.lire()
-                    return(token[0] )== ";"
+                self.verif_expr()
+                token = self.lire()
+                if(token[0] != ";"):
+                    self.erreur(";", token[2])
+                return
             case "(", _:
-                if(self.verif_expr_parenthese() and self.verif_expr_bis()):
-                    token = self.lire()
-                    return(token[0] )== ";"
+                self.verif_expr_parenthese()
+                self.verif_expr_bis()
+                token = self.lire()
+                if(token[0] != ";"):
+                    self.erreur(";", token[2])
+                return
             case _,"ident":
-                return(self.verif_stmt_ident())
-        return False
+                self.verif_stmt_ident()
+                return
+        self.correct = False
+        self.nb_erreurs += 1
+        # self.erreur("statement", token[2])
+        return
 
 
     def verif_stmtes(self):
         print("passage verif_stmtes")
         var = True
+        n = self.nb_erreurs
         while var:
+            actuel = self.correct
             i = self.pos ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
-            var = self.verif_stmt()
+            self.verif_stmt()
+            if(n != self.nb_erreurs):
+                var = False
+                self.correct = actuel
         self.pos = i
+        self.nb_erreurs = n
         return True
 
     def verif_stmt_type(self):
@@ -709,12 +761,17 @@ class Parseur:
         token = self.lire()
         match token[0]:
             case ";":
-                return True
+                return
             case "=":
-                if self.verif_expr():
-                    token = self.lire()
-                    return(token[0] == ";")
-        return False
+                self.verif_expr()
+                token = self.lire()
+                if(token[0] != ";"):
+                    self.erreur(";", token[2])
+                return
+        self.correct = False
+        self.nb_erreurs += 1
+        # self.erreur("statement type", token[2])
+        return
 
 
 
@@ -722,19 +779,23 @@ class Parseur:
         print("passage verif_if")
         token = self.lire()
         if(token[0] == "else"):
-            return self.verif_stmt()
+            self.verif_stmt()
+            return
         else:
             token = self.reculer(1)
-            return True
+            return 
         
     def verif_stmt_ident(self):
         print("passage verif_stmt_ident")
         token = self.lire()
         match token[1]:
             case "ident":
-                return self.verif_stmt_type()
+                self.verif_stmt_type()
+                return
             case _:
                 token = self.reculer(1)
-                if self.verif_expr_bis():
-                    token = self.lire()
-                    return(token[0] == ";")
+                self.verif_expr_bis()
+                token = self.lire()
+                if(token[0] != ";"):
+                    self.erreur(";", token[2])
+                return
