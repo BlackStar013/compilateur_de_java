@@ -67,6 +67,7 @@ def lexeur(txt):
             c = file.read(1)
             if(c == "/"):
                 file.readline()
+                ligne += 1
                 c = file.read(1)
             elif(c == "*"):
                 c = file.read(1)
@@ -77,6 +78,8 @@ def lexeur(txt):
                             c = file.read(1)
                             break
                     else:
+                        if(c == "\n"):
+                            ligne += 1
                         c = file.read(1)
             else:
                 L.append(("/", "opérateurs", ligne))

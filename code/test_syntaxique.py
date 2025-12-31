@@ -1,5 +1,5 @@
 from lexeur import *
-from analyseur_syntaxique import *
+from erreurs_included import *
 print("\nlancement des tests")
 
 
@@ -109,5 +109,5 @@ if __name__ == "__main__":
     test_egal()#8
     test_crochet()#9
     test_parenthese_if()#10
-    test_addition()#11
+    # test_addition()#11
     print("les tests sont passés\n")

@@ -111,8 +111,7 @@ class Parseur:
                 token = self.lire()
                 if(token[0] != ")"):
                     token = self.reculer(1)
-                    if(not self.verif_params()):
-                        return                      
+                    self.verif_params()                     
                     token = self.lire()
                     if(token[0] != ")"):
                         self.erreur(")", token[2])
@@ -123,8 +122,7 @@ class Parseur:
                 token = self.lire()
                 if(token[0] != "}"):
                     token = self.reculer(1)
-                    if not self.verif_stmtes():
-                        return 
+                    self.verif_stmtes()
                 token = self.lire()
                 if token[0] != "}":
                     self.erreur("}", token[2])
@@ -142,7 +140,8 @@ class Parseur:
                     self.erreur("ident", token[2])
                 self.verif_decl_suffix()
             case (_,"ident"): 
-                return(self.verif_decl_ident())
+                self.verif_decl_ident()
+                return
             case _:
                 self.correct = False
                 self.nb_erreurs += 1
@@ -175,8 +174,7 @@ class Parseur:
                 token = self.lire()
                 if(token[0]!=")"):
                     token = self.reculer(1)
-                    if not self.verif_params():
-                        return
+                    self.verif_params()
                     token = self.lire()
                     if token[0] != ")":
                         self.erreur(")", token[2])
@@ -224,12 +222,12 @@ class Parseur:
 
     def verif_params(self):
         print("passage verif_params")
-        if(self.verif_type()):
-            token = self.lire()
-            if(token[1] != "ident"):
-                self.erreur("ident", token[2])
-            self.verif_params_bis()
-            return 
+        self.verif_type()
+        token = self.lire()
+        if(token[1] != "ident"):
+            self.erreur("ident", token[2])
+        self.verif_params_bis()
+        return 
 
     def verif_params_bis(self):
         print("passage verif_params_bis")
@@ -555,8 +553,7 @@ class Parseur:
                 token = self.lire()
                 if token[0] != ")" :
                     token = self.reculer(1)
-                    if not self.verif_lexpr() :
-                        return
+                    self.verif_lexpr() 
                     token = self.lire()
                     if token[0] != ")" :
                         self.erreur(")", token[2])
@@ -568,6 +565,7 @@ class Parseur:
     
    # def verif_expr_parenthese(self) :  cas à compléter 2
     def verif_expr_parenthese(self) : 
+        print("passage verif_parentheseAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
         save_pos = self.pos
         token = self.lire()
         maybe_type = False
@@ -575,23 +573,23 @@ class Parseur:
             maybe_type = True 
         if maybe_type :
             next_token = self.lire() 
-            if next_token[0] == ")" :
-                if self.verif_expr_N8() :
-                    return True 
+            if(next_token == ")"):
+                nb = self.nb_erreurs
+                self.verif_expr_N8()
+                if nb == self.nb_erreurs:
+                        return
                 else :  # Il faut reculer de l'ensemble des éléments testés dans self.verif_expr_N8
+                    self.nb_erreurs = nb
                     new_pos = self.pos
                     self.reculer(new_pos - save_pos - 1)
             else : 
                 self.reculer(1)
         self.reculer(1)
-        if self.verif_expr() :
-            token = self.lire()
-            if token[0] == ")" :
-                return True 
-            else :
-                return False 
-        else :
-            return False
+        self.verif_expr()
+        token = self.lire()
+        if token[0] != ")" :
+            self.erreur(")", token[2])
+        return  
 
         
     def verif_expr_bis(self) :
