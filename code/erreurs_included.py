@@ -167,7 +167,7 @@ class Parseur():
                 decl_l.append(decl)
         self.pos = i
         self.nb_erreurs = n
-        return decl_l
+        return DeclBlock(decl_l)
 
 
     def verif_decl_suffix(self):
@@ -285,6 +285,7 @@ class Parseur():
         if(token[0] != "String"):
             self.erreur("String", token[2])
         token = self.lire()
+        nom_arg = token[0]
         if(token[1] != "ident"):
             self.erreur("ident", token[2])
         token = self.lire()
@@ -299,16 +300,16 @@ class Parseur():
         token = self.lire()
         if(token[0] != "{"):
             self.erreur("{", token[2])                   
+    
+        noeud_stmt_block = self.verif_stmtes()
         token = self.lire()
+        
         if(token[0]!="}"):
-            token = self.reculer(1)
-            if not self.verif_stmtes():
-                 return
+            self.erreur("}", token[2])
             token = self.lire()
             if token[0] != "}":
                 self.erreur("}", token[2])
                 return
-            token = self.lire()
             if(token[0] == "}"):
                 self.correct = self.correct and True
         elif(token[0] == "}"):
@@ -316,7 +317,7 @@ class Parseur():
             if(token[0] != "}"):
                 self.erreur("}",token[2])
             self.correct = self.correct and True
-        return 
+        return  Class_Main(nom_arg, noeud_stmt_block)
 
 
     def verif_expr(self) :
@@ -761,7 +762,7 @@ class Parseur():
                 stmt_l.append(stmt)
         self.pos = i
         self.nb_erreurs = n
-        return stmt_l
+        return StmtBlock(stmt_l)
 
     def verif_stmt_type(self):
         #print("passage verif_stmt_type")
