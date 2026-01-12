@@ -32,7 +32,7 @@ build-image-job:
 test_operation:
   stage: test
   script:
-    - pytest ./code/lexeur/test_lexeur.py::test_operation --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_lexeur.py::test_operation --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -43,7 +43,7 @@ test_operation:
 test_operateur:
   stage: test
   script:
-    - pytest ./code/lexeur/test_lexeur.py::test_operateur --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_lexeur.py::test_operateur --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -54,7 +54,7 @@ test_operateur:
 test_string:
   stage: test
   script:
-    - pytest ./code/lexeur/test_lexeur.py::test_string --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_lexeur.py::test_string --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -65,7 +65,7 @@ test_string:
 test_motsclef:
   stage: test
   script:
-    - pytest ./code/lexeur/test_lexeur.py::test_motsclef --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_lexeur.py::test_motsclef --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -76,7 +76,7 @@ test_motsclef:
 test_idvsmotclef:
   stage: test
   script:
-    - pytest ./code/lexeur/test_lexeur.py::test_idvsmotclef --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_lexeur.py::test_idvsmotclef --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -87,7 +87,18 @@ test_idvsmotclef:
 test_symboles:
   stage: test
   script:
-    - pytest ./code/lexeur/test_lexeur.py::test_symboles --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_lexeur.py::test_symboles --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_erreur:
+  stage: test
+  script:
+    - pytest ./code/test_lexeur.py::test_erreur --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
