@@ -37,12 +37,12 @@ class File(Node):
 #         super().__init__("Classes", fils, parent)
 
 class Class(Node):
-    def __init__(self, ident, decles, extends=None): # Revenir sur decles
+    def __init__(self, ident, declb, extends=None): # Revenir sur decles
         fils = [Node(ident)]
         if extends :
             n_extends = Node(f"extends {extends}")
             fils.append(n_extends)
-        fils.append(decles)
+        fils.append(declb)
         
         super().__init__("Class", fils=fils)
 
@@ -71,6 +71,13 @@ class Champ(Node) : # il s'agit de <decl> => <type> <ident> ;
     def __init__(self, type_ident, ident) :
         fils = [Node(type_ident), Node(ident)]
         super().__init__("Champ", fils=fils)
+
+class DeclBlock(Node):
+    def __init__(self, decles) :
+        '''
+        decles: liste de noeuds \n
+        '''
+        super().__init__("DeclBlock", fils=decles)
 
 class ParamBlock(Node) :
     def __init__(self, params) :
@@ -124,13 +131,7 @@ class ExprStmt(Node) : # <expr> ;
     def __init__(self, expr) :
         super().__init__("Expr", fils=[expr])
 
-class EmptyStmt(Node) : # ;
-    def __init__(self) :
-        super().__init__("Empty")
-
-
 # Expression
-
 class Attribution(Node) : # <expr_N1'>
     def __init__(self, left_expr, right_expr) :
         fils = [left_expr, right_expr]
@@ -160,9 +161,11 @@ class New(Node) : # <item> => new <ident>(...)
     def __init__(self, name, args) :
         super().__init__("New", valeur=name, fils=args)
 
-class AppelMethode(Node) : # pas sûr
+## aqui ##
 
-    def __init__(self, obj, name, args) :
+
+class AppelMethode(Node) : # pas sûr
+    def __init__(self, obj, args) :
         # obj : Le noeud de l'objet sur lequel on appelle la méthode.
         # Si l'appel est "maMethode()", obj sera souvent un noeud "Literal:this" ou None.
         # method_name : Le nom de la fonction (string)
@@ -171,21 +174,17 @@ class AppelMethode(Node) : # pas sûr
         if obj :
             fils = [obj]
         fils = fils + args 
-        super().__init__("AppelMethode", valeur=name, fils=fils)
+        super().__init__("AppelMethode", fils=fils)
 
 class AccesChamp(Node) : # pas sûr
-    def __init__(self, obj, name) :
+    def __init__(self, obj) :
         # obj : Le noeud de l'expression avant le point
         # field_name : Le nom de l'attribut accédé (string)
-        super().__init__("AccesChamp", valeur=name, fils=[obj])
+        super().__init__("AccesChamp", fils=[obj])
 
 class Element(Node) : # <item> => <integer> | <string> | true | false | this | null
     def __init__(self, type_lit, val) :
         super().__init__("Element", valeur=f"{type_lit}:{val}")
-
-class Ident(Node) : # <item> => <ident>
-    def __init__(self, name) :
-        super().__init__("Ident", valeur=name) 
 
 # class Decl(Node):
 #     pass
@@ -198,19 +197,6 @@ class Ident(Node) : # <item> => <ident>
 #     pass
 # class Decl_ident(Node):
 #     pass
-
-# class Param_block(Node):
-#     def __init__(self):
-#         super().__init__("Param_block", list())
-
-# class Param(Node):
-#     def __init__(self, ident, type):
-#         super().__init__("Param")
-#         self.add_list_fils = [Node(type, None, self),Node(ident, None, self)]
-
-# class Params_bis(Node):
-#     pass
-
 # class Expr(Node):
 #     pass
 # class Expr_N1_bis(Node):

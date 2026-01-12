@@ -1,4 +1,5 @@
 n = 0
+from nodes_class import *
 
 class Parseur:
     def __init__(self, tokens):
@@ -32,39 +33,53 @@ class Parseur:
     
 
     def verif_file(self):
-        self.verif_classes()
-        return(self.verif_class_main())
-    
+        c_l = self.verif_classes()
+        ans, n = self.verif_class_main()
+        return ans, File(n, c_l)
         
 
     def verif_classes(self): #boucle while tant qu'on a un class
         var = True
+        c_l = []
         while var:
-            var = self.verif_class(self)
-        return
+            var, c = self.verif_class()
+            if c is not None:
+                c_l.append(c)
+        return c_l #liste de classes
 
 
     def verif_class(self):
+        '''
+        return noeud class ou None
+        '''
         token = self.lire()
         if token[0] == "class":
             token = self.lire()
             if token[1] == "ident":
                 if token[0] == "Main":
                     self.reculer(2)
-                    return False
+                    return False, None  
+                
                 else:
+                    nom_classe = token[0]
                     token = self.lire()
                     if token[0] == "extends":
                         token = self.lire()
                         if token[1] != "ident":
-                            return False
+                            return False, None
+                        
+                        ext = token[0]
                         token = self.lire()
                     if token[0] == "{":
-                        self.verif_decles()
+                        declb = self.verif_decles()
                         token = self.lire()
                         if token[0] == "}":
-                            return True
-        return("le fichier n'est pas juste")
+                            if ext:
+                                c = Class(nom_classe, declb, ext)
+                            else:
+                                c = Class(nom_classe, declb)
+                            return True, c
+        return("le fichier n'est pas juste", None)
 
     def verif_decl(self):
         token = self.lire()
@@ -76,18 +91,18 @@ class Parseur:
                     if(token[0]=="("):
                         token = self.lire()
                         if(token[0]!=")"):
-                            self.reculer()
+                            self.reculer(1)
                             if not self.verif_params():
-                                return False
+                                return False, None
                             token = self.lire()
                             if token[0] != ")":
-                                return False
+                                return False, None
                         token = self.lire()
                         if(token[0] == "{"):
                             self.verif_stmtes()
                             token = self.lire()
                             if token[0] != "}":
-                                return False 
+                                return False, None 
             case("boolean",_):
                 return(self.verif_ident() and self.verif_decl_suffix())
             case("int",_):
@@ -99,10 +114,14 @@ class Parseur:
             
     def verif_decles(self):
         var = True
+        l_decl = []
         while var:
             i = n ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
-            var = self.verif_decl()
+            var, decl = self.verif_decl()
+            if decl is not None: 
+                l_decl.append(decl)
         n = i
+        return DeclBlock(l_decl)
         
 
 
@@ -254,14 +273,13 @@ class Parseur:
         return False
 
 
-
     def verif_if(self):
         token = self.lire()
         if(token[0] == "else"):
             return self.verif_stmt()
         else:
-            self.reculer()
-            return True
+            self.reculer(1)
+            return True, None #pas de else stmt
         
     def verif_stmt_ident(self):
         token = self.lire()
