@@ -1,17 +1,20 @@
 import sys
+from analyseur_syntaxique import *
+
 
 chiffres = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 alpha_min = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 alpha_maj = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 mots_cles = ["boolean", "class", "else", "extends", "false", "for", "if", "int", "new", "null", "public", "return", "static", "this", "true", "void"]
 symbol = [";", "{", "}" ,"(" ,")", "[" , "]", ","]
-operat = ["+", "*", "%", "-", "."]
+operat = ["+", "*", "%", "-", ".", "/"]
 
 
 def lexeur(txt):
     file = open(txt,'r')
     c = file.read(1)
     L = []
+    ligne = 1
     while c != "":
         if c in chiffres: #reconnaître entiers  
             multi = 1
@@ -28,7 +31,7 @@ def lexeur(txt):
                     for i in range(len(nb)):
                         nombre += multi * int(nb[i])
                         multi = multi/10 
-                    L.append((int(nombre), "integer"))
+                    L.append((int(nombre), "integer", ligne))
                     break
         elif c in alpha_min or c in alpha_maj or c == "_": #reconnaître un mot clé ou un identifiant
             mot = c
@@ -42,20 +45,20 @@ def lexeur(txt):
                 while c in alpha_min or c in alpha_maj or c in chiffres or c =="_":
                     mot = mot + c
                     c = file.read(1)
-                L.append((mot, "ident"))
+                L.append((mot, "ident", ligne))
             else:
                 if mot == "instanceof" or mot == "cast":
-                    L.append((mot, "opérateurs"))
+                    L.append((mot, "opérateurs", ligne))
                 elif mot in mots_cles:
-                    L.append((mot, "mots clés"))
+                    L.append((mot, "mots clés", ligne))
                 else:
-                    L.append((mot, "ident"))
+                    L.append((mot, "ident", ligne))
         elif(c == '"'): # pour reconnaître un string
             word = ""
             while(1):
                 c = file.read(1)
                 if(c == '"'):
-                    L.append((word, "mot"))
+                    L.append((word, "mot", ligne))
                     c = file.read(1)
                     break
                 else:
@@ -64,6 +67,7 @@ def lexeur(txt):
             c = file.read(1)
             if(c == "/"):
                 file.readline()
+                ligne += 1
                 c = file.read(1)
             elif(c == "*"):
                 c = file.read(1)
@@ -74,77 +78,69 @@ def lexeur(txt):
                             c = file.read(1)
                             break
                     else:
+                        if(c == "\n"):
+                            ligne += 1
                         c = file.read(1)
             else:
-                L.append(("/", "opérateurs"))
+                L.append(("/", "opérateurs", ligne))
         elif c in symbol: #reconnnaître un symbole simple
-            L.append((c, "symboles"))
+            L.append((c, "symboles", ligne))
             c = file.read(1)
         elif c == "|": #reconnaître ||
             c = file.read(1)
             if c != "|":
                 return("Erreur")
             else:
-                L.append(("||", "opérateurs"))
+                L.append(("||", "opérateurs", ligne))
                 c = file.read(1)
         elif c == "&": #reconnaître &&
             c = file.read(1)
             if c != "&":
                 return("Erreur")
             else:
-                L.append(("&&", "opérateurs"))
+                L.append(("&&", "opérateurs", ligne))
                 c = file.read(1)
         elif c == "!": #reconnaître ! ou !=
             c = file.read(1)
             if c == "=":
-                L.append(("!=", "opérateurs"))
+                L.append(("!=", "opérateurs", ligne))
                 c = file.read(1)
             else:
-                L.append(("!", "opérateurs"))
+                L.append(("!", "opérateurs", ligne))
         elif c == "=": #reconnaître = ou ==
             c = file.read(1)
             if c == "=":
-                L.append(("==", "opérateurs"))
+                L.append(("==", "opérateurs", ligne))
                 c = file.read(1)
             else:
-                L.append(("=", "opérateurs"))
+                L.append(("=", "opérateurs", ligne))
         elif c == "<": #reconnaître < ou <=
             c = file.read(1)
             if c == "=":
-                L.append(("<=", "opérateurs"))
+                L.append(("<=", "opérateurs", ligne))
                 c = file.read(1)
             else:
-                L.append(("<", "opérateurs"))
+                L.append(("<", "opérateurs", ligne))
         elif c == ">": #reconnaître > ou >=
             c = file.read(1)
             if c == "=":
-                L.append((">=", "opérateurs"))
+                L.append((">=", "opérateurs", ligne))
                 c = file.read(1)
             else:
-                L.append((">", "opérateurs"))
+                L.append((">", "opérateurs", ligne))
         elif c in operat: #reconnaître un opérateur simple
-            L.append((c, "opérateurs"))
+            L.append((c, "opérateurs", ligne))
             c = file.read(1)
-        elif c == "\n" or c == ' ':
+        elif c == ' ' or c == ' ':
+            c = file.read(1)
+        elif c == "\n":
+            ligne += 1
             c = file.read(1)
         else:
             return("Erreur")
     file.close()
-    print(L)
     return(L)
 
 
-def lire(M):
-    for i in range(len(M)):
-        print(M[i])
-
-def main():
-    fichier = sys.argv[1]
-    L = lexeur(fichier)
-    lire(L)
 
 
-
-
-if __name__ == "__main__":
-    main()

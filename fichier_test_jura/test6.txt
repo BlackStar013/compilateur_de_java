@@ -1,0 +1,25 @@
+class Main {
+    public static void main(String mot[]){
+        int a = 3;
+        int b = 6;
+        int c = a + b;
+        bool var = false;
+        if(a*c == 2){
+            var = true;
+        }
+        else if(b-a < 0){
+            a = a % b;
+        }
+        else{
+            c = b/a;
+        }
+        if(!var){
+            if( a <= b){
+                a = a + b;
+            }
+        }
+        Person person = new Person(); 
+        person.name = "John"; 
+        person.age = 30;
+    }
+}
