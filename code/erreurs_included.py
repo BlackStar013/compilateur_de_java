@@ -1,16 +1,12 @@
-n = 0
-
-
-class Parseur:
-
-    correct = True
-    nb_erreurs = 0
-
+from nodes_class import *
+class Parseur():
 
     def __init__(self, tokens):
         self.tokens = tokens
         self.pos = -1
         self.token = tokens[self.pos]
+        self.correct = True
+        self.nb_erreurs = 0
 
     def lire(self): 
         '''
@@ -44,25 +40,29 @@ class Parseur:
     def verif_file(self):
         #print("passage verif_file")
         # print(self.token)
-        self.verif_classes()
-        self.verif_class_Main()
-        return(self.correct)
+        class_l = self.verif_classes()
+        main = self.verif_class_Main()
+        return File(main, class_l)
 
 
     def verif_classes(self): #boucle while tant qu'on a un class
         #print("passage verif_classes")
         var = True
         n = self.nb_erreurs
+        class_l = []
         while var:
             actuel = self.correct
             i = self.pos
-            self.verif_class()
+            cl = self.verif_class()
             if(n != self.nb_erreurs):
                 var = False
                 self.correct = actuel
+            if cl is not None:
+                class_l.append(cl)
         self.pos = i
         self.nb_erreurs = n
-        return True
+        # retroune les classes trouvées
+        return class_l
 
 
     def verif_class(self):
@@ -77,17 +77,20 @@ class Parseur:
             token = self.reculer(2)
             self.correct =  False
             self.nb_erreurs += 1
-            return
+            return None
         else:
             token = self.lire()
             if token[0] == "extends":
+                ext = None
                 token = self.lire()
                 if token[1] != "ident":
                     self.erreur("ident", token[2])
+                ext = token[0]
                 token = self.lire()
             if token[0] != "{":
                 self.erreur("{", token[2])
-            if self.verif_decles():
+            declB = self.verif_decles()
+            if declB:
                 token = self.lire()
                 if token[0] != "}":
                     self.erreur("}", token[2])
@@ -152,16 +155,19 @@ class Parseur:
         #print("passage verif_decles")
         var = True
         n = self.nb_erreurs
+        decl_l = []
         while var:
             actuel = self.correct
             i = self.pos
-            self.verif_decl() 
+            decl = self.verif_decl() 
             if n != self.nb_erreurs:
                 var = False
                 self.correct = actuel
+            if decl is not None:
+                decl_l.append(decl)
         self.pos = i
         self.nb_erreurs = n
-        return True
+        return decl_l
 
 
     def verif_decl_suffix(self):
@@ -743,16 +749,19 @@ class Parseur:
         #print("passage verif_stmtes")
         var = True
         n = self.nb_erreurs
+        stmt_l = []
         while var:
             actuel = self.correct
             i = self.pos ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
-            self.verif_stmt()
+            stmt = self.verif_stmt()
             if(n != self.nb_erreurs):
                 var = False
                 self.correct = actuel
+            if stmt is not None:
+                stmt_l.append(stmt)
         self.pos = i
         self.nb_erreurs = n
-        return True
+        return stmt_l
 
     def verif_stmt_type(self):
         #print("passage verif_stmt_type")
