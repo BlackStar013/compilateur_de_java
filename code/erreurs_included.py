@@ -531,7 +531,7 @@ class Parseur():
                      nom_funct = g.fils[1].name
                 else:
                     obj = g
-                    
+
                 token = self.lire()
                 args = []
                 if token[0] != ")" :
@@ -549,12 +549,13 @@ class Parseur():
     def verif_expr_ident(self) :
         #print("passage verif_expr_ident")
         token = self.lire()
+        n = Element(None, token[0])
         if token[0] == '=' :
-            expr = self.verif_expr()
-            return expr
+            d = self.verif_expr()
+            return Attribution(n,d)
         else :
             token = self.reculer(1)
-            expr = self.verif_expr_N9_bis()
+            expr = self.verif_expr_N9_bis(n)
             return expr
     
     ############################################################ je reprends a partir de la
@@ -583,9 +584,7 @@ class Parseur():
                 if token[0] != "(" :   
                     self.erreur("(", token[2])
                 token = self.lire()
-
                 args_l = []
-
                 if token[0] != ")" :
                     token = self.reculer(1)
                     args_l = self.verif_lexpr() 
@@ -594,6 +593,7 @@ class Parseur():
                         self.erreur(")", token[2])
                         return               
                 return New(nom, args_l)
+            
             case _, "ident" :
                 ret_type = None
         return Element(ret_type,token[0])
@@ -663,7 +663,7 @@ class Parseur():
         token = self.lire()
         match token[0], token[1]:
             case ";", _ : 
-                return
+                return Node("_")
             case "if", _:
                 token = self.lire()
                 if token[0] != "(":
@@ -719,6 +719,7 @@ class Parseur():
                 return n_stmtB
             
             case "return", _:
+                expr = None
                 token = self.lire()
                 if token[0] != ";":
                     token = self.reculer(1)
@@ -732,13 +733,15 @@ class Parseur():
                 ret_type = token[0]
                 token = self.lire()
                 nom = token[0]
-                n_var = Element(ret_type, nom)
                 if(token[1] != "ident"):
                     self.erreur("ident", token[2])
+
                 nds = self.verif_stmt_type()
                 if nds[0] == "Init":
-                    return Node("=", [n_var, nds[1]]) 
-                return n_var
+                    expr_init = nds[1] 
+                else: expr_init = None
+                return ExprVar(ret_type, nom, expr_init)
+            
             case _,"integer":
                 expr = self.verif_expr_bis()
                 token = self.lire()
@@ -867,3 +870,28 @@ class Parseur():
                 if(token[0] != ";"):
                     self.erreur(";", token[2])
                 return "Expr", expr
+    
+    def verif_stmt_ident(self):
+        type_potentiel = self.token[0] 
+        token = self.lire()
+        if token[1] == "ident":
+            nom_var = token[0]
+            token = self.lire()
+            expr_init = None
+            if token[0] == "=":
+                expr_init = self.verif_expr()
+                token = self.lire()        
+            if token[0] != ";":
+                self.erreur(";", token[2])
+            return ExprVar(type_potentiel, nom_var, expr_init)
+        else:
+            # On doit annuler lectures pour utiliser verif_expr()
+            # On recule de 2 : 
+            #   1. Le token actuel (qui n'était pas un ident)
+            #   2. Le token précédent (type_potentiel) qui est le début de l'expression
+            self.reculer(2)
+            expr = self.verif_expr()
+            token = self.lire()
+            if token[0] != ";":
+                self.erreur(";", token[2])
+            return ExprStmt(expr)

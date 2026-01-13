@@ -1,5 +1,7 @@
 from lexeur import *
 from erreurs_included import *
+from nodes_class import *
+from dessiner import *
 print("\nlancement des tests")
 
 
@@ -8,21 +10,27 @@ def test_class_Main():
     parseur = Parseur(lexeur(fichier))
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == True)
+    assert(parseur.nb_erreurs == 0)
+    assert isinstance(verif, File)
+
+    viz = initialisation(verif)
+    show(verif, "arbre_test_final")
+
 
 def test_class_mainetMain():
     fichier = "./fichier_test_jura/test2.txt"
     parseur = Parseur(lexeur(fichier))
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == True)
+    assert(parseur.nb_erreurs == 0)
+    assert isinstance(verif, File)
 
 def test_erreur():
     fichier = "./fichier_test_jura/test3.txt"
     parseur = Parseur(lexeur(fichier))
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == False)
+    assert(parseur.nb_erreurs > 0)
 
 
 def test_POO():
@@ -31,7 +39,7 @@ def test_POO():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == True)
+    assert(parseur.nb_erreurs == 0)
 
 
 def test_plusieurs_class_avant_Main():
@@ -40,7 +48,7 @@ def test_plusieurs_class_avant_Main():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == True)
+    assert(parseur.nb_erreurs == 0)
 
 def test_operations():
     fichier = "./fichier_test_jura/test6.txt"
@@ -48,7 +56,7 @@ def test_operations():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == True)
+    assert(parseur.nb_erreurs == 0)
 
 
 def test_accolade():
@@ -57,7 +65,7 @@ def test_accolade():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == True)
+    assert(parseur.nb_erreurs == 0)
 
 
 
@@ -67,7 +75,7 @@ def test_egal():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == False)
+    assert(parseur.nb_erreurs > 0)
 
 
 
@@ -77,7 +85,7 @@ def test_crochet():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == False)
+    assert(parseur.nb_erreurs > 0)
 
 
 def test_parenthese_if():
@@ -86,7 +94,7 @@ def test_parenthese_if():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == False)
+    assert(parseur.nb_erreurs > 0)
 
 
 def test_addition():
@@ -95,7 +103,7 @@ def test_addition():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(verif == False)
+    assert(parseur.nb_erreurs > 0)
 
 
 if __name__ == "__main__":
