@@ -71,6 +71,7 @@ class Parseur():
         if token[0] != "class":
             self.erreur("class", token[2])
         token = self.lire()
+        nom_class = token
         if token[1] != "ident":
             self.erreur("ident", token[2])
         if token[0] == "Main":
@@ -80,8 +81,8 @@ class Parseur():
             return None
         else:
             token = self.lire()
+            ext = None
             if token[0] == "extends":
-                ext = None
                 token = self.lire()
                 if token[1] != "ident":
                     self.erreur("ident", token[2])
@@ -90,15 +91,10 @@ class Parseur():
             if token[0] != "{":
                 self.erreur("{", token[2])
             declB = self.verif_decles()
-            if declB:
-                token = self.lire()
-                if token[0] != "}":
-                    self.erreur("}", token[2])
-            else:
-                token = self.lire()
-                if token != "}":
-                    self.erreur("}", token[2])
-        return
+            token = self.lire()
+            if token[0] != "}":
+                self.erreur("}", token[2])
+        return Class(nom_class, declB, ext)
 
     def verif_decl(self):
         #print("passage verif_decl")
@@ -106,15 +102,20 @@ class Parseur():
         match token[0], token[1]:
             case("void",_):
                 token = self.lire()
+                nom_methode = token[0]
                 if (token[1] != "ident"):
                     self.erreur("ident", token[2])
                 token = self.lire()
                 if(token[0] != "("):
                     self.erreur("(", token[2])
                 token = self.lire()
+
+                noeud_paramB = None
+
                 if(token[0] != ")"):
                     token = self.reculer(1)
-                    self.verif_params()                     
+                    param_l = self.verif_params()
+                    noeud_paramB = ParamBlock(param_l)                     
                     token = self.lire()
                     if(token[0] != ")"):
                         self.erreur(")", token[2])
@@ -123,28 +124,54 @@ class Parseur():
                 if(token[0] != "{"):
                     self.erreur("{", token[2])
                 token = self.lire()
+
+                noeud_stmtB = None
+
                 if(token[0] != "}"):
                     token = self.reculer(1)
-                    self.verif_stmtes()
+                    noeud_stmtB = self.verif_stmtes()
                 token = self.lire()
                 if token[0] != "}":
                     self.erreur("}", token[2])
                     return 
-                return 
+                return Methode(nom_methode, "void", noeud_stmtB, noeud_paramB)
             case("boolean",_):
                 token = self.lire()
+                nom = token[0]
                 if(token[1] != "ident"):
                     self.erreur("ident", token[2])
-                self.verif_decl_suffix()
-                return
+
+                nds = self.verif_decl_suffix()
+                if nds[0] == "Methode":
+                    return Methode(nom, "boolean", nds[2], nds[1])
+                elif nds[0] == "Attribut":
+                    return Champ("boolean", nom)
+                return 
+            
             case("int",_):
                 token = self.lire()
+                nom = token[0]
                 if(token[1] != "ident"):
                     self.erreur("ident", token[2])
-                self.verif_decl_suffix()
-            case (_,"ident"): 
-                self.verif_decl_ident()
+
+                nds = self.verif_decl_suffix()
+                if nds[0] == "Methode":
+                    return Methode(nom, "int", nds[2], nds[1])
+                elif nds[0] == "Attribut":
+                    return Champ("int", nom)
                 return
+            
+            case (_,"ident"):
+                ret_type = token[0] 
+                nds = self.verif_decl_ident()
+                if nds[0] == "Methode":
+                    return Methode(nds[-1], ret_type , nds[2], nds[1])
+                elif nds[0] == "Const":
+                    return Constructeur(ret_type, nds[2], nds[1])
+                elif nds[0] == "Attribut":
+                    return Champ(ret_type, nds[-1])
+                return
+                
             case _:
                 self.correct = False
                 self.nb_erreurs += 1
@@ -176,25 +203,30 @@ class Parseur():
         match token[0]:
             case ";":
                 self.correct = self.correct and True
+                return "Attribut", None, None
             case "(":
                 token = self.lire()
+                noeud_paramB = None
                 if(token[0]!=")"):
                     token = self.reculer(1)
-                    self.verif_params()
+                    param_l = self.verif_params()
+                    noeud_paramB = ParamBlock(param_l) 
                     token = self.lire()
                     if token[0] != ")":
                         self.erreur(")", token[2])
                     token = self.lire()
-                if token == "{":
-                    self.verif_stmtes()
+                    noeud_stmtB = None
+                if token[0] == "{":
+                    noeud_stmtB = self.verif_stmtes()
                     token = self.lire()
                     if token[0] != "}":
                         self.erreur("}", token[2])
                     else:
                         self.correct = self.correct and True
+                        return "Methode", noeud_paramB, noeud_stmtB
             case _ :
                 self.erreur("; ou (", token[2])
-        return
+        return None, None, None
 
     #prime devient bis
 
@@ -202,48 +234,60 @@ class Parseur():
         #print("passage verif_decl_ident")
         token = self.lire()
         if(token[1] == "ident"):
-            self.verif_decl_suffix()
+            nom = token[0]
+            nds_suf = self.verif_decl_suffix()
+            return nds_suf, nom
         elif(token[0] == "("):
             token = self.lire()
+            paramB = None
             if(token[0] != ")"):
                 token = self.reculer(1)
-                if(not self.verif_params()):
-                    return
+
+                param_l = self.verif_params()
+                paramB = ParamBlock(param_l)
+
                 token = self.lire()
                 if(token[0] != ")"):
                     self.erreur(")", token[2])
-                    return
+                
                 token = self.lire()
                 if(token[0] != "{"):
                     self.erreur("{", token[2])
+
+                stmtB = self.verif_stmtes()
                 token = self.lire()
+
                 if(token[0]!="}"):
-                    token = self.reculer(1)
-                    if not self.verif_stmtes():
-                        return
-                    token = self.lire()
-                    if token[0] != "}":
-                        self.erreur("}", token[2])
-                        return 
+                    self.erreur("}", token[2])
+
+                return "Const", paramB, stmtB, None
+        else:    
+            self.erreur("ident ou (", token[2])
+            return None, None, None, None
 
     def verif_params(self):
         #print("passage verif_params")
-        self.verif_type()
+        type_param = self.verif_type()
         token = self.lire()
         if(token[1] != "ident"):
             self.erreur("ident", token[2])
-        self.verif_params_bis()
-        return 
+
+        nom_param = token
+        noeud_param = Param(type_param, nom_param)
+
+        suite_param = self.verif_params_bis()
+        return [noeud_param] + suite_param
 
     def verif_params_bis(self):
         #print("passage verif_params_bis")
+        param_l = []
         token = self.lire()
         if(token[0] == ","):
-            self.verif_params()
+            param_l = self.verif_params()
         else:
             self.reculer(1)
         self.correct = self.correct and True
-        return
+        return param_l
 
     def verif_type(self):
         #print("passage verif_type")
@@ -251,7 +295,7 @@ class Parseur():
 
         if(token[0] == "boolean" or token[0] == "int" or token[1] == "ident"):
             self.correct = self.correct and True
-            return 
+            return token[0]
         self.erreur("boolean ou int ou un ident", token[2])
         return 
 
@@ -539,34 +583,40 @@ class Parseur():
         token = self.lire()
         match token[0], token[1] :
             case _, "integer" :
-                return
+                ret_type = "integer" 
             case _, "mot" :
-                return 
+                ret_type = "String"
             case "true", _ :
-                return
+                ret_type = "boolean"
             case "false", _ :
-                return 
+                ret_type = "boolean" 
             case "this", _ :
-                return
+                ret_type = "this"
             case "null", _ :
-                return 
+                ret_type = "null" 
             case "new", _ :
                 token = self.lire()
+                nom = token[0]
                 if token[1] != "ident" :
                     self.erreur("ident", token[2])
                 token = self.lire()
                 if token[0] != "(" :   
                     self.erreur("(", token[2])
                 token = self.lire()
+
+                args_l = []
+
                 if token[0] != ")" :
                     token = self.reculer(1)
-                    self.verif_lexpr() 
+                    args_l = self.verif_lexpr() 
                     token = self.lire()
                     if token[0] != ")" :
                         self.erreur(")", token[2])
-                        return 
+                        return               
+                return New(nom, args_l)
             case _, "ident" :
-                return 
+                ret_type = None
+        return Element(ret_type,token[0])
     
     ################################################################"" Arreter ici pour Moi (à savoir moi), à finir
     
@@ -614,19 +664,18 @@ class Parseur():
 
     def verif_lexpr(self):
         #print("passage verif_lexpr")
-        self.verif_expr()
-        self.verif_lexpr_bis()
-        return
+        exp = self.verif_expr()
+        suite = self.verif_lexpr_bis()
+        return [exp] + suite
 
     def verif_lexpr_bis(self):
         #print("passage verif_lexpr_bis")
         token = self.lire()
         if token[0] == ",":
-            self.verif_lexpr()
-            return
+            return self.verif_lexpr()
         else:
-            token = self.reculer(1)
-            return
+            self.reculer(1)
+            return []
         
     def verif_stmt(self):
         #print("passage verif_stmt")

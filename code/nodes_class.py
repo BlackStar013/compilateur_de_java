@@ -30,7 +30,10 @@ class Node:
 
 class File(Node):
     def __init__(self, main, classes=None):
-        super().__init__("File", fils = [classes, main])
+        fils = []
+        fils.append(classes)
+        fils.append(main)
+        super().__init__("File", fils = fils)
 
 # class Classes(Node):
 #     def __init__(self,fils=None, parent=None):
@@ -53,6 +56,9 @@ class Class_Main(Node):
 
 class Methode(Node) :
     def __init__(self, ident, return_type, StmtBlock, params=None) :
+        '''
+        :param params: noeud ParamBlock
+        '''
         fils = [Node(return_type), Node(ident)]
         if params :
             fils.append(params)
@@ -70,7 +76,7 @@ class Constructeur(Node) :
 class Champ(Node) : # il s'agit de <decl> => <type> <ident> ;
     def __init__(self, type_ident, ident) :
         fils = [Node(type_ident), Node(ident)]
-        super().__init__("Champ", fils=fils)
+        super().__init__("Déclaration", fils=fils) #soit un champs soit déclaration d'une variable
 
 class DeclBlock(Node):
     def __init__(self, decles) :
@@ -88,7 +94,10 @@ class ParamBlock(Node) :
 
 class Param(Node) :
     def __init__(self, type_ident, ident) :
-        fils = [Node(type_ident), Node(ident)]
+        if type_ident is None:
+            fils = [Node(ident)]
+        else:
+            fils = [Node(type_ident), Node(ident)]
         super().__init__("Param", fils=fils)
 
 
@@ -184,7 +193,8 @@ class AccesChamp(Node) : # pas sûr
 
 class Element(Node) : # <item> => <integer> | <string> | true | false | this | null
     def __init__(self, type_lit, val) :
-        super().__init__("Element", valeur=f"{type_lit}:{val}")
+        super().__init__("Element", fils=[Node(type_lit), Node(val)])
+
 
 # class Decl(Node):
 #     pass
