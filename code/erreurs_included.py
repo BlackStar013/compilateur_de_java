@@ -366,183 +366,149 @@ class Parseur():
 
     def verif_expr(self) :
         #print("passage verif_expr")
-        self.verif_expr_N2()
-        self.verif_expr_N1_bis()
-        return
+        gauche = self.verif_expr_N2()
+        return self.verif_expr_N1_bis(gauche)
     
-    def verif_expr_N1_bis(self) :
+    def verif_expr_N1_bis(self, g) :
         #print("passage verif_expr_N1_bis")
         token = self.lire()
         if token[0] != '=' :
             self.reculer(1)
-            return
-        self.verif_expr()
-        return
+            return g
+        d = self.verif_expr()
+        return Attribution(g, d)
         
     def verif_expr_N2(self) :
         #print("passage verif_expr_N2")
-        self.verif_expr_N3()
-        self.verif_expr_N2_bis()
-        return
+        g = self.verif_expr_N3()
+        return self.verif_expr_N2_bis(g)
     
-    def verif_expr_N2_bis(self) :
+    def verif_expr_N2_bis(self, g) :
         #print("passage verif_expr_N2_bis")
         token = self.lire()
-        if token[0] == '||' :
-            self.verif_expr_N3()
-            self.verif_expr_N2_bis()
-            return
+        op = token[0]
+        if op == '||' :
+            d = self.verif_expr_N3()
+            n = Binop(op, g, d)
+            return self.verif_expr_N2_bis(n)
         else :
             token = self.reculer(1)
-            return 
-     
+            return g
         
     def verif_expr_N3(self) :
         #print("passage verif_expr_N3")
-        self.verif_expr_N4()
-        self.verif_expr_N3_bis()
-        return 
+        g = self.verif_expr_N4()
+        return self.verif_expr_N3_bis(g) 
     
-    def verif_expr_N3_bis(self) :
+    def verif_expr_N3_bis(self, g) :
         #print("passage verif_expr_N3_bis")
         token = self.lire()
-        if token[0] == '&&' :
-            self.verif_expr_N4()
-            self.verif_expr_N3_bis() 
+        op = token[0]
+        if op == '&&' :
+            d = self.verif_expr_N4()
+            n = Binop(op, g, d)
+            return self.verif_expr_N3_bis(n) 
         else :
             token = self.reculer(1)
-        return 
+            return g
         
     def verif_expr_N4(self) :
         #print("passage verif_expr_N4")
-        self.verif_expr_N5()
-        self.verif_expr_N4_bis()
-        return
+        g = self.verif_expr_N5()
+        return self.verif_expr_N4_bis(g)
     
-    def verif_expr_N4_bis(self) :
+    def verif_expr_N4_bis(self, g) :
         #print("passage verif_expr_N4_bis")
         token = self.lire()
-        match token[0] :
-            case "==" :
-                self.verif_expr_N5()
-                self.verif_expr_N4_bis()
-                return
-            case "!=" :
-                self.verif_expr_N5()
-                self.verif_expr_N4_bis()
-                return
+        op = token[0]
+        match op :
+            case "==" | "!=" :
+                d = self.verif_expr_N5()
+                n = Binop(op, g, d)
+                return self.verif_expr_N4_bis(n)
             case _ :
                 token = self.reculer(1)
-                return 
+                return g
             
     def verif_expr_N5(self) :
         #print("passage verif_expr_N5")
-        self.verif_expr_N6()
-        self.verif_expr_N5_bis()
-        return
+        g = self.verif_expr_N6()
+        return self.verif_expr_N5_bis(g)
     
-    def verif_expr_N5_bis(self) :
+    def verif_expr_N5_bis(self, g) :
         #print("passage verif_expr_N5_bis")
         token = self.lire()
-        match token[0] :
-            case "<" :
-                self.verif_expr_N6()
-                self.verif_expr_N5_bis()
-                return
-            case "<=" :
-                self.verif_expr_N6() 
-                self.verif_expr_N5_bis()
-                return
-            case ">" :
-                self.verif_expr_N6()
-                self.verif_expr_N5_bis()
-                return
-            case ">=" :
-                self.verif_expr_N6() 
-                self.verif_expr_N5_bis()
-                return
+        op = token[0]
+        match op :
+            case "<" | "<=" | ">" | ">=" :
+                d = self.verif_expr_N6()
+                noeud = Binop(op, g, d)
+                return self.verif_expr_N5_bis(noeud)
             case "instanceof" :
-                self.verif_type()
-                self.verif_expr_N5_bis()
-                return
+                cible_type = self.verif_type()
+                noeud = Instanceof(cible_type, g)
+                return self.verif_expr_N5_bis(noeud)
             case _ :
                 token = self.reculer(1)
-                return True 
+                return g 
             
     def verif_expr_N6(self) :
         #print("passage verif_expr_N6")
-        self.verif_expr_N7()
-        self.verif_expr_N6_bis()
-        return
+        g = self.verif_expr_N7()
+        return self.verif_expr_N6_bis(g)
     
-    def verif_expr_N6_bis(self) :
+    def verif_expr_N6_bis(self, g) :
         #print("passage verif_expr_N6_bis")
         token = self.lire()
-        match token[0] :
-            case "+" :
-                self.verif_expr_N7()
-                self.verif_expr_N6_bis()
-                return 
-            case "-" :
-                self.verif_expr_N7()
-                self.verif_expr_N6_bis()
-                return
+        op = token[0]
+        match op :
+            case "+" | "-" :
+                d = self.verif_expr_N7()
+                n = Binop(op, g, d)
+                return self.verif_expr_N6_bis(n) 
             case _ :
                 token = self.reculer(1)
-                return  
+                return g
     
     def verif_expr_N7(self) :
         #print("passage verif_expr_N7")
-        self.verif_expr_N8()
-        self.verif_expr_N7_bis()
-        return
+        g = self.verif_expr_N8()
+        return self.verif_expr_N7_bis(g)
     
-    def verif_expr_N7_bis(self) :
+    def verif_expr_N7_bis(self, g) :
         #print("passage verif_expr_N7_bis")
         token = self.lire()
-        match token[0] :
-            case "*" :
-                self.verif_expr_N8()
-                self.verif_expr_N7_bis()
-                return 
-            case "/" :
-                self.verif_expr_N8()
-                self.verif_expr_N7_bis()
-                return
-            case "%" :
-                self.verif_expr_N8()
-                self.verif_expr_N7_bis()
-                return
+        op = token[0]
+        match op :
+            case "*" | "/" | "%":
+                d = self.verif_expr_N8()
+                n = Binop(op, d, g)
+                return self.verif_expr_N7_bis(n)
             case _ :
                 token = self.reculer(1)
-                return  
+                return g  
             
     def verif_expr_N8(self) :
         #print("passage verif_expr_N8")
         token = self.lire()
-        match token[0] :
-            case "!" :
-                self.verif_expr_N8()
-                return
-            case "-" :
-                self.verif_expr_N8()
-                return
+        op = token[0]
+        match op :
+            case "!" | "-"  :
+                exp = self.verif_expr_N8()
+                return Unop(op, exp)
             case "(" :
-                self.verif_expr_parenthese()
-                return
+                return self.verif_expr_parenthese()
             case _ :
                 token = self.reculer(1)
-                self.verif_expr_N9()
-                return
+                return self.verif_expr_N9()
 
     def verif_expr_N9(self) :
         #print("passage verif_expr_N9")
-        self.verif_item()
-        self.verif_expr_N9_bis()
-        return 
+        g = self.verif_item()
+        return self.verif_expr_N9_bis(g) 
 
 ###########################################################JEN ETAIS A ICI
-    def verif_expr_N9_bis(self) :
+    def verif_expr_N9_bis(self, g) :
         #print("passage verif_expr_N9_bis")
         token = self.lire()
         match token[0] :
@@ -550,32 +516,46 @@ class Parseur():
                 token = self.lire()
                 if token[1] != "ident" :
                     self.erreur("ident", token[2])
-                self.verif_expr_ident()
-                return
+                nom_champ = token[0]
+                n_g = AccesChamp(g, nom_champ)
+                return self.verif_expr_N9_bis(n_g)
             case "(" :
+                nom_funct = "inconnu"
+                obj = None
+                if isinstance(g, Element) and g.fils[0].nom is None:
+                     nom_funct = g.fils[1].name
+                     obj = Node("this")
+                elif isinstance(g, AccesChamp):
+                     # AccesChamp -> fils[0]=obj, fils[1]=nom_champ
+                     obj = g.fils[0]
+                     nom_funct = g.fils[1].name
+                else:
+                    obj = g
+                    
                 token = self.lire()
+                args = []
                 if token[0] != ")" :
                     token = self.reculer(1)
-                    self.verif_lexpr()
+                    args = self.verif_lexpr()
                     token = self.lire()
                 if token[0] != ")" :
                     self.erreur(")", token[2])
-                self.verif_expr_N9_bis()
-                return 
+                n_g = AppelMethode(obj, nom_funct, args)
+                return self.verif_expr_N9_bis(n_g) 
             case _ :
                 token = self.reculer(1)
-                return
+                return g
             
     def verif_expr_ident(self) :
         #print("passage verif_expr_ident")
         token = self.lire()
         if token[0] == '=' :
-            self.verif_expr()
-            return
+            expr = self.verif_expr()
+            return expr
         else :
             token = self.reculer(1)
-            self.verif_expr_N9_bis()
-            return
+            expr = self.verif_expr_N9_bis()
+            return expr
     
     ############################################################ je reprends a partir de la
     def verif_item(self) :
@@ -629,12 +609,13 @@ class Parseur():
         if (token[0] in ["boolean", "int"] or token[1] == "ident") :
             maybe_type = True 
         if maybe_type :
+            cible_type = token[0]
             next_token = self.lire() 
             if(next_token == ")"):
                 nb = self.nb_erreurs
-                self.verif_expr_N8()
+                exp = self.verif_expr_N8()
                 if nb == self.nb_erreurs:
-                        return
+                        return Cast(cible_type, exp)
                 else :  # Il faut reculer de l'ensemble des éléments testés dans self.verif_expr_N8
                     self.nb_erreurs = nb
                     new_pos = self.pos
@@ -642,11 +623,11 @@ class Parseur():
             else : 
                 self.reculer(1)
         self.reculer(1)
-        self.verif_expr()
+        exp = self.verif_expr()
         token = self.lire()
         if token[0] != ")" :
             self.erreur(")", token[2])
-        return  
+        return exp
 
         
     def verif_expr_bis(self) :
@@ -862,8 +843,6 @@ class Parseur():
         # self.erreur("statement type", token[2])
         return
 
-
-
     def verif_stmt_if(self):
         #print("passage verif_if")
         token = self.lire()
@@ -872,7 +851,7 @@ class Parseur():
             return stmt
         else:
             token = self.reculer(1)
-            return 
+            return Node("_")
         
     def verif_stmt_ident(self):
         #print("passage verif_stmt_ident")

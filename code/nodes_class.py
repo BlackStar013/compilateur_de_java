@@ -174,7 +174,7 @@ class New(Node) : # <item> => new <ident>(...)
 
 
 class AppelMethode(Node) : # pas sûr
-    def __init__(self, obj, args) :
+    def __init__(self, obj, nom_meth, args) :
         # obj : Le noeud de l'objet sur lequel on appelle la méthode.
         # Si l'appel est "maMethode()", obj sera souvent un noeud "Literal:this" ou None.
         # method_name : Le nom de la fonction (string)
@@ -183,82 +183,14 @@ class AppelMethode(Node) : # pas sûr
         if obj :
             fils = [obj]
         fils = fils + args 
-        super().__init__("AppelMethode", fils=fils)
+        super().__init__(f"AppelMethode:{nom_meth}", fils=fils)
 
 class AccesChamp(Node) : # pas sûr
-    def __init__(self, obj) :
+    def __init__(self, obj, field_name) :
         # obj : Le noeud de l'expression avant le point
         # field_name : Le nom de l'attribut accédé (string)
-        super().__init__("AccesChamp", fils=[obj])
+        super().__init__("AccesChamp", fils=[obj, field_name])
 
 class Element(Node) : # <item> => <integer> | <string> | true | false | this | null
     def __init__(self, type_lit, val) :
         super().__init__("Element", fils=[Node(type_lit), Node(val)])
-
-
-# class Decl(Node):
-#     pass
-
-# class Decl_block(Node):
-#     def __init__(self):
-#         super().__init__("Decl_block", list())
-
-# class Decl_suffix(Node):
-#     pass
-# class Decl_ident(Node):
-#     pass
-# class Expr(Node):
-#     pass
-# class Expr_N1_bis(Node):
-#     pass
-# class Expr_N2(Node):
-#     pass
-# class Expr_N2_bis(Node):
-#     pass
-# class Expr_N3(Node):
-#     pass
-# class Expr_N3_bis(Node):
-#     pass
-# class Expr_N4(Node):
-#     pass
-# class Expr_N4_bis(Node):
-#     pass
-# class Expr_N5(Node):
-#     pass
-# class Expr_N5_bis(Node):
-#     pass
-# class Expr_N6(Node):
-#     pass
-# class Expr_N6_bis(Node):
-#     pass
-# class Expr_N7(Node):
-#     pass
-# class Expr_N7_bis(Node):
-#     pass
-# class Expr_N8(Node):
-#     pass
-# class Expr_N9(Node):
-#     pass
-# class Expr_N9_bis(Node):
-#     pass
-# class Expr_parenthese(Node):
-#     pass
-# class Expr_ident(Node):
-#     pass
-# class Item(Node):
-#     pass
-# class Expr_bis(Node):
-#     pass
-# class Lexpr(Node):
-#     pass
-# class Lexpr_bis(Node):
-#     pass
-# class Stmt(Node):
-#     pass
-# class Stmt_type(Node):
-#     pass
-# class Stmt_if(Node):
-#     pass
-
-# class Stmt_ident(Node):
-#     pass
