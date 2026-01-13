@@ -687,68 +687,91 @@ class Parseur():
                 token = self.lire()
                 if token[0] != "(":
                     self.erreur("(", token[2])
-                self.verif_expr()
+                expr = self.verif_expr()
                 token = self.lire()
                 if token[0] != ")":
                     self.erreur(")", token[2])
-                self.verif_stmt()
-                self.verif_stmt_if()
-                return
+                n_stmt = self.verif_stmt()
+                n_if = self.verif_stmt_if()
+                return If(expr, n_stmt, n_if)
+            
             case "for", _:
                 token = self.lire()
                 if token[0] != "(":
                     self.erreur("(", token[2])
-                for i in range(2):
-                    if(token[0] != ";"):
-                        token = self.reculer(1)
-                        self.verif_expr()
-                    token = self.lire()
-                    if token[0] != ";":
-                        self.erreur(";", token[2])
-                    token = self.lire()
                 
-                if not token[0] == ")":
+                token = self.lire()
+                init = Node("_")
+                if(token[0] != ";"):
                     token = self.reculer(1)
-                    self.verif_expr()
+                    init = self.verif_expr()
                     token = self.lire()
-                if token[0] == ")":
-                    self.verif_stmt()
-                return
+                if token[0] != ";":
+                    self.erreur(";", token[2])
+                
+                token = self.lire()
+                cond = Node("_")
+                if(token[0] != ";"):
+                    token = self.reculer(1)
+                    incondit = self.verif_expr()
+                    token = self.lire()
+                if token[0] != ";":
+                    self.erreur(";", token[2])
+                
+                token = self.lire()
+                maj = Node("_")
+                if(token[0] != ")"):
+                    token = self.reculer(1)
+                    maj = self.verif_expr()
+                    token = self.lire()
+                if token[0] != ")":
+                    self.erreur(")", token[2])
+                
+                n_stmt = self.verif_stmt()
+                return For(init, cond, maj, StmtBlock(n_stmt))
+            
             case "{", _:
-                self.verif_stmtes()
+                n_stmtB = self.verif_stmtes()
                 token = self.lire()
                 if(token[0] != "}"):
                     self.erreur("}", token[2])
-                return
+                return n_stmtB
+            
             case "return", _:
                 token = self.lire()
                 if token[0] != ";":
                     token = self.reculer(1)
-                    self.verif_expr()
+                    expr = self.verif_expr()
                     token = self.lire()
                 if token[0] != ";":
                     self.erreur(";", token[2])
-                return
+                return Return(expr)
+            
             case "boolean" | "int", _:
+                ret_type = token[0]
                 token = self.lire()
+                nom = token[0]
+                n_var = Element(ret_type, nom)
                 if(token[1] != "ident"):
                     self.erreur("ident", token[2])
-                self.verif_stmt_type()
-                return
+                nds = self.verif_stmt_type()
+                if nds[0] == "Init":
+                    return Node("=", [n_var, nds[1]]) 
+                return n_var
             case _,"integer":
-                self.verif_expr_bis()
+                expr = self.verif_expr_bis()
                 token = self.lire()
                 if(token[2] != ";"):
                     self.erreur(";", token[2])
                 return
             case _, "mot":
-                self.verif_expr_bis()
+                expr = self.verif_expr_bis()
                 token = self.lire()
                 if(token[0] != ";"):
                     self.erreur(";", token[2])
                 return
             #######################ON POURRAIT LES REGROUPER AVEC UN TRUC EN MODE {token[1]}
-            case "true" | "false" | "this" | "new",_:
+            case "true" | "false" | "this" | "null" ,_:
                 self.verif_expr_bis()
                 token = self.lire()
                 if(token[0] != ";"):
@@ -756,6 +779,7 @@ class Parseur():
                 return
             case "new", _:
                 token = self.lire()
+                ret_type = token[0]
                 if(token[0] != "ident"):
                     self.erreur("ident", token[2])
                 token = self.lire()
@@ -764,21 +788,23 @@ class Parseur():
                 token = self.lire()
                 if token[0] != ")":
                     token = self.reculer(1)
-                    self.verif_expr()
+                    args = self.verif_lexpr() #avant verif_expr
                     token = self.lire()
+                n_new = New(ret_type, args)
                 if token[0] != ")":
                     self.erreur(")", token[2])
-                self.verif_expr_bis()
+                expr = self.verif_expr_bis()
                 token = self.lire()
                 if(token[0] != ";"):
                     self.erreur(";", token[2])
-                return
+                return n_new, expr
             case "!" | "-",_:
-                self.verif_expr()
+                unop = token[0]
+                expr = self.verif_expr()
                 token = self.lire()
                 if(token[0] != ";"):
                     self.erreur(";", token[2])
-                return
+                return Unop(unop, expr)
             case "(", _:
                 self.verif_expr_parenthese()
                 self.verif_expr_bis()
@@ -787,8 +813,14 @@ class Parseur():
                     self.erreur(";", token[2])
                 return
             case _,"ident":
-                self.verif_stmt_ident()
-                return
+                ret_type = token[0]
+                nds = self.verif_stmt_ident()
+                if nds[0] == "Init":
+                    return Node("=", [Element(ret_type, nds[-1]) ,nds[1]])
+                elif nds[0] == "Déclaration":
+                    return Element(ret_type, nds[-1])
+                else:
+                    return nds[-1]
         self.correct = False
         self.nb_erreurs += 1
         # self.erreur("statement", token[2])
@@ -818,13 +850,13 @@ class Parseur():
         token = self.lire()
         match token[0]:
             case ";":
-                return
+                return "Déclaration", None
             case "=":
-                self.verif_expr()
+                expr = self.verif_expr()
                 token = self.lire()
                 if(token[0] != ";"):
                     self.erreur(";", token[2])
-                return
+                return "Init", expr
         self.correct = False
         self.nb_erreurs += 1
         # self.erreur("statement type", token[2])
@@ -836,8 +868,8 @@ class Parseur():
         #print("passage verif_if")
         token = self.lire()
         if(token[0] == "else"):
-            self.verif_stmt()
-            return
+            stmt = self.verif_stmt()
+            return stmt
         else:
             token = self.reculer(1)
             return 
@@ -847,12 +879,12 @@ class Parseur():
         token = self.lire()
         match token[1]:
             case "ident":
-                self.verif_stmt_type()
-                return
+                nds = self.verif_stmt_type()
+                return nds, token[0]
             case _:
                 token = self.reculer(1)
-                self.verif_expr_bis()
+                expr = self.verif_expr_bis()
                 token = self.lire()
                 if(token[0] != ";"):
                     self.erreur(";", token[2])
-                return
+                return "Expr", expr
