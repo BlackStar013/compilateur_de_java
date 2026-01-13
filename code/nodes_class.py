@@ -5,8 +5,18 @@ class Node:
         fils: liste de noeuds fils \n
         '''
         self.name = name
-        self.fils = fils
+        self.fils = []
         self.parent = None
+
+        if fils is not None:
+            if isinstance(fils, list):
+                for f in fils:
+                    if isinstance(f, list):
+                        self.fils += f
+                    elif f is not None:
+                        self.fils.append(f)
+            else:
+                self.fils.append(fils)
 
     def add_fils(self, node_f):
         if self.fils is None:
@@ -30,10 +40,7 @@ class Node:
 
 class File(Node):
     def __init__(self, main, classes=None):
-        fils = []
-        fils.append(classes)
-        fils.append(main)
-        super().__init__("File", fils = fils)
+        super().__init__("File", fils = [classes, main])
 
 # class Classes(Node):
 #     def __init__(self,fils=None, parent=None):

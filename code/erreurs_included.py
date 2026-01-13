@@ -770,7 +770,8 @@ class Parseur():
                     # Vraie erreur syntaxique
                     self.correct = False
                     self.nb_erreurs += 1
-                    return Node("Error")
+                    print("une erreur est détéctée???")
+                    return Node("_")
 
 
     def verif_stmtes(self):
@@ -817,7 +818,7 @@ class Parseur():
         else:
             token = self.reculer(1)
             return Node("_")
-        
+    '''    
     def verif_stmt_ident(self):
         #print("passage verif_stmt_ident")
         token = self.lire()
@@ -832,7 +833,7 @@ class Parseur():
                 if(token[0] != ";"):
                     self.erreur(";", token[2])
                 return "Expr", expr
-    
+    '''
     def verif_stmt_ident(self):
         type_potentiel = self.token[0] 
         token = self.lire()

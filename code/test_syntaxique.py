@@ -14,7 +14,7 @@ def test_class_Main():
     assert isinstance(verif, File)
 
     viz = initialisation(verif)
-    show(verif, "arbre_test_final")
+    show(viz, "test1")
 
 
 def test_class_mainetMain():
@@ -24,6 +24,8 @@ def test_class_mainetMain():
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs == 0)
     assert isinstance(verif, File)
+    viz = initialisation(verif)
+    show(viz, "test2")
 
 def test_erreur():
     fichier = "./fichier_test_jura/test3.txt"

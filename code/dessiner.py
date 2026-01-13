@@ -15,7 +15,7 @@ def ajout_arete(arbre:Digraph, node:Node):
     node_id = str(id(node))
 
     #étiquette du noeud
-    label = f"<{node.type}>"
+    label = f"<{node.name}>"
     
     arbre.node(name=node_id, label=label)
 
