@@ -482,7 +482,7 @@ class Parseur():
         match op :
             case "*" | "/" | "%":
                 d = self.verif_expr_N8()
-                n = Binop(op, d, g)
+                n = Binop(op, g, d)
                 return self.verif_expr_N7_bis(n)
             case _ :
                 token = self.reculer(1)
@@ -564,7 +564,7 @@ class Parseur():
         token = self.lire()
         match token[0], token[1] :
             case _, "integer" :
-                ret_type = "integer" 
+                ret_type = "int" 
             case _, "mot" :
                 ret_type = "String"
             case "true", _ :
@@ -694,7 +694,7 @@ class Parseur():
                 cond = Node("_")
                 if(token[0] != ";"):
                     token = self.reculer(1)
-                    incondit = self.verif_expr()
+                    cond = self.verif_expr()
                     token = self.lire()
                 if token[0] != ";":
                     self.erreur(";", token[2])
@@ -754,7 +754,6 @@ class Parseur():
             case "(", _:
                 pass
             case _,"ident":
-                self.reculer(1)
                 return self.verif_stmt_ident()
             case _,_:
                 if token[1] in ["integer", "mot"] or token[0] in ["true", "false", "this", "null", "new", "!", "-", "("]:
@@ -770,7 +769,7 @@ class Parseur():
                     # Vraie erreur syntaxique
                     self.correct = False
                     self.nb_erreurs += 1
-                    print("une erreur est détéctée???")
+                    print(token, ": une erreur est détéctée\n")
                     return Node("_")
 
 

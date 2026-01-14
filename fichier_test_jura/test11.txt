@@ -1,1 +1,5 @@
-int i = 1 + 3 - 2;
+class Main {
+    public static void main(String mot[]){
+    int i = 1 + 3 - 2;
+    }
+} 

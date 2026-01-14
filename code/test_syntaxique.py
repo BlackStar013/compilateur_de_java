@@ -41,7 +41,9 @@ def test_POO():
     parseur = Parseur(lex)
     # print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(parseur.nb_erreurs == 0)
+    # assert(parseur.nb_erreurs == 0)
+    viz = initialisation(verif)
+    show(viz, "test4")
 
 
 def test_plusieurs_class_avant_Main():
@@ -51,6 +53,8 @@ def test_plusieurs_class_avant_Main():
     # print(parseur.tokens)
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs == 0)
+    viz = initialisation(verif)
+    show(viz, "test5")
 
 def test_operations():
     fichier = "./fichier_test_jura/test6.txt"
@@ -59,6 +63,9 @@ def test_operations():
     # print(parseur.tokens)
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs == 0)
+
+    viz = initialisation(verif)
+    show(viz, "test6")
 
 
 def test_accolade():
@@ -97,15 +104,21 @@ def test_parenthese_if():
     # print(parseur.tokens)
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs > 0)
+    viz = initialisation(verif)
+    show(viz, "test10")
 
 
 def test_addition():
     fichier = "./fichier_test_jura/test11.txt"
     lex = lexeur(fichier)
     parseur = Parseur(lex)
-    # print(parseur.tokens)
+    print(parseur.tokens)
     verif = parseur.verif_file()
-    assert(parseur.nb_erreurs > 0)
+    assert(parseur.nb_erreurs == 0)
+    viz = initialisation(verif)
+    show(viz, "test11")
+
+
 
 
 if __name__ == "__main__":

@@ -13,18 +13,24 @@ def initialisation(racine):
 def ajout_arete(arbre:Digraph, node:Node):
     #ID unique pour chaque noeud
     node_id = str(id(node))
-
+    
     #étiquette du noeud
-    label = f"<{node.name}>"
+    label = f"{node.name}"
     
     arbre.node(name=node_id, label=label)
 
     #parcours des fils
     if node.fils:
         for f in node.fils:
-            if f is not None:
+            if isinstance(f,Node):
                 ajout_arete(arbre, f)
                 arbre.edge(node_id, str(id(f)))
+                
+            elif isinstance(f, str):
+                print(f"ERREUR CRITIQUE : Le noeud <{node.name}> contient le texte '{f}' dans ses fils !")
+                print("Un fils doit obligatoirement être un Node.")
+                continue # On saute pour ne pas planter
+
             else: #nécessaire ?
                 none_id = f"None"
                 arbre.node(none_id, shape='point', width='0.1')

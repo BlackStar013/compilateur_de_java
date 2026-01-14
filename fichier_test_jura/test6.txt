@@ -3,7 +3,7 @@ class Main {
         int a = 3;
         int b = 6;
         int c = a + b;
-        bool var = false;
+        boolean var = false;
         if(a*c == 2){
             var = true;
         }

@@ -1,6 +1,6 @@
 /venv/
 env*/
-code/arbre/nodes_test.py
 code/*/__pycache__
+code/__pycache__
 .pytest*
 *.png

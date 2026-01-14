@@ -83,7 +83,7 @@ class Constructeur(Node) :
 class Champ(Node) : # il s'agit de <decl> => <type> <ident> ;
     def __init__(self, type_ident, ident) :
         fils = [Node(type_ident), Node(ident)]
-        super().__init__("Déclaration", fils=fils) #soit un champs soit déclaration d'une variable
+        super().__init__("Champ", fils=fils) #soit un champs soit déclaration d'une variable
 
 class DeclBlock(Node):
     def __init__(self, decles) :
@@ -175,7 +175,8 @@ class Cast(Node): # pas sûr
 
 class New(Node) : # <item> => new <ident>(...)
     def __init__(self, name, args) :
-        super().__init__("New", valeur=name, fils=args)
+
+        super().__init__("New", fils=[Node(name), args])
 
 ## aqui ##
 
@@ -196,7 +197,7 @@ class AccesChamp(Node) : # pas sûr
     def __init__(self, obj, field_name) :
         # obj : Le noeud de l'expression avant le point
         # field_name : Le nom de l'attribut accédé (string)
-        super().__init__("AccesChamp", fils=[obj, field_name])
+        super().__init__("AccesChamp", fils=[obj, Node(field_name)])
 
 class Element(Node) : # <item> => <integer> | <string> | true | false | this | null
     def __init__(self, type_lit, val) :
