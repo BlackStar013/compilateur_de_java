@@ -71,7 +71,7 @@ class Parseur():
         if token[0] != "class":
             self.erreur("class", token[2])
         token = self.lire()
-        nom_class = token
+        nom_class = token[0]
         if token[1] != "ident":
             self.erreur("ident", token[2])
         if token[0] == "Main":
