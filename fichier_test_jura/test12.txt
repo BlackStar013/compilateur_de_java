@@ -1,0 +1,10 @@
+class Iceberg2D{
+    void Iceberg2D(Point g, Point d) {
+    }
+}
+
+class Main {
+    public static void main(String chat[]){
+        return(1);
+    }
+}

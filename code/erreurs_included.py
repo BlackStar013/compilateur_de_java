@@ -272,7 +272,7 @@ class Parseur():
         if(token[1] != "ident"):
             self.erreur("ident", token[2])
 
-        nom_param = token
+        nom_param = token[0]
         noeud_param = Param(type_param, nom_param)
 
         suite_param = self.verif_params_bis()
@@ -361,7 +361,10 @@ class Parseur():
             if(token[0] != "}"):
                 self.erreur("}",token[2])
             self.correct = self.correct and True
-        return  Class_Main(nom_arg, noeud_stmt_block)
+        if self.correct:
+            return  Class_Main(nom_arg, noeud_stmt_block)
+        else:
+            return
 
 
     def verif_expr(self) :
@@ -562,6 +565,7 @@ class Parseur():
     def verif_item(self) :
         #print("passage verif_item")
         token = self.lire()
+        ret_type = " "
         match token[0], token[1] :
             case _, "integer" :
                 ret_type = "int" 
@@ -572,6 +576,7 @@ class Parseur():
             case "false", _ :
                 ret_type = "boolean" 
             case "this", _ :
+                print(token[0], "lu")
                 ret_type = "this"
             case "null", _ :
                 ret_type = "null" 
@@ -754,9 +759,21 @@ class Parseur():
             case "(", _:
                 pass
             case _,"ident":
-                return self.verif_stmt_ident()
+                self.reculer(1)
+                left_expr = self.verif_expr_N9()
+                token = self.lire()
+                if token[0] == "=":
+                    right_expr = self.verif_expr()
+                    token = self.lire()
+                    if token[0] != ";":
+                        self.erreur(";", token[2])
+                    return Attribution(left_expr, right_expr)
+                else:
+                    self.reculer(1)
+                    return self.verif_stmt_ident()
             case _,_:
                 if token[1] in ["integer", "mot"] or token[0] in ["true", "false", "this", "null", "new", "!", "-", "("]:
+                    print(token[0], "lu")
                     self.reculer(1) # On remet le token pour verif_expr
                     expr = self.verif_expr()
                     

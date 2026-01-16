@@ -75,7 +75,8 @@ def test_accolade():
     # print(parseur.tokens)
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs == 0)
-
+    viz = initialisation(verif)
+    show(viz, "test7")
 
 
 def test_egal():
@@ -85,6 +86,8 @@ def test_egal():
     # print(parseur.tokens)
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs > 0)
+    viz = initialisation(verif)
+    show(viz, "test8")
 
 
 
@@ -95,6 +98,8 @@ def test_crochet():
     # print(parseur.tokens)
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs > 0)
+    viz = initialisation(verif)
+    show(viz, "test9")
 
 
 def test_parenthese_if():
@@ -112,11 +117,20 @@ def test_addition():
     fichier = "./fichier_test_jura/test11.txt"
     lex = lexeur(fichier)
     parseur = Parseur(lex)
-    print(parseur.tokens)
+    #print(parseur.tokens)
     verif = parseur.verif_file()
     assert(parseur.nb_erreurs == 0)
     viz = initialisation(verif)
     show(viz, "test11")
+
+def test_appels():
+    fichier = "./fichier_test_jura/test12.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    #print(parseur.tokens)
+    verif = parseur.verif_file()
+    viz = initialisation(verif)
+    show(viz, "test12")
 
 
 
