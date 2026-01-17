@@ -85,7 +85,7 @@ def test_addition():
     lex = lexeur(fichier)
     parseur = Parseur(lex)
     parseur.verif_file()
-    assert(parseur.correct == False)
+    assert(parseur.correct == True)
 
 
 if __name__ == "__main__":
@@ -99,5 +99,5 @@ if __name__ == "__main__":
     test_egal()#8
     test_crochet()#9
     test_parenthese_if()#10
-    # test_addition()#11
+    test_addition()#11
     print("les tests sont passés\n")
