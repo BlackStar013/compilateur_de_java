@@ -743,7 +743,7 @@ class Parseur():
                     # Vraie erreur syntaxique
                     self.correct = False
                     self.nb_erreurs += 1
-                    print(token, ": une erreur est détéctée\n")
+                    #print(token, ": une erreur est détéctée\n")
                     return Node("_")
 
 
