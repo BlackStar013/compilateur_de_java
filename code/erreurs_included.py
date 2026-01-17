@@ -117,14 +117,14 @@ class Parseur():
                 token = self.lire()
                 if(token[0] != "{"):
                     self.erreur("{", token[2])
-                token = self.lire()
 
+                token = self.lire()
                 noeud_stmtB = None
 
                 if(token[0] != "}"):
                     token = self.reculer(1)
                     noeud_stmtB = self.verif_stmtes()
-                token = self.lire()
+                    token = self.lire()
                 if token[0] != "}":
                     self.erreur("}", token[2])
                     return 
@@ -167,6 +167,7 @@ class Parseur():
                 return
                 
             case _:
+                
                 self.correct = False
                 self.nb_erreurs += 1
                 return 
@@ -225,7 +226,7 @@ class Parseur():
         if(token[1] == "ident"):
             nom = token[0]
             nds_suf = self.verif_decl_suffix()
-            return nds_suf, nom
+            return nds_suf + (nom,)
         elif(token[0] == "("):
             token = self.lire()
             paramB = None
@@ -239,17 +240,20 @@ class Parseur():
                 if(token[0] != ")"):
                     self.erreur(")", token[2])
                 
-                token = self.lire()
-                if(token[0] != "{"):
-                    self.erreur("{", token[2])
+            token = self.lire()
+            if(token[0] != "{"):
+                self.erreur("{", token[2])
 
+            token = self.lire()
+            stmtB = None
+            
+            if(token[0]!="}"):
+                self.reculer(1)
                 stmtB = self.verif_stmtes()
                 token = self.lire()
-
-                if(token[0]!="}"):
-                    self.erreur("}", token[2])
-
-                return "Const", paramB, stmtB, None
+            if(token[0] != "}"):
+                self.erreur("}", token[2])
+            return "Const", paramB, stmtB, None
         else:    
             self.erreur("ident ou (", token[2])
             return None, None, None, None
@@ -704,17 +708,6 @@ class Parseur():
                     expr_init = nds[1] 
                 else: expr_init = None
                 return ExprVar(ret_type, nom, expr_init)
-            
-            case _,"integer" | "mot":
-                pass
-            case "true" | "false" | "this" | "null" ,_:
-                pass
-            case "new", _:
-                pass
-            case "!" | "-",_:
-                pass
-            case "(", _:
-                pass
             case _,"ident":
                 self.reculer(1)
                 left_expr = self.verif_expr_N9()

@@ -1,5 +1,6 @@
 from lexeur import *
 from erreurs_included import *
+from dessiner import *
 print("\nlancement des tests")
 
 
@@ -26,10 +27,10 @@ def test_POO():
     fichier = "./fichier_test_jura/test4.txt" #test de this + parenthèses + if + commentaires + plus fonctions avant main...
     lex = lexeur(fichier)
     parseur = Parseur(lex)
-    parseur.verif_file()
-    print(parseur.correct)
+    verif = parseur.verif_file()
     assert(parseur.correct == True)
-
+    viz = initialisation(verif)
+    show(viz, "test4")
 
 def test_plusieurs_class_avant_Main():
     fichier = "./fichier_test_jura/test5.txt"
@@ -86,6 +87,16 @@ def test_addition():
     parseur = Parseur(lex)
     parseur.verif_file()
     assert(parseur.correct == True)
+
+def test_12():
+    fichier = "./fichier_test_jura/test12.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    verif = parseur.verif_file()
+    #assert(parseur.correct == True)
+
+    viz = initialisation(verif)
+    show(viz, "test12")
 
 
 if __name__ == "__main__":

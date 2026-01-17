@@ -1,5 +1,9 @@
 class Iceberg2D{
+    Point a;
+    Point b;
+
     void Iceberg2D(Point g, Point d) {
+        this.a = g;
     }
 }
 
