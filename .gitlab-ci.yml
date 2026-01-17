@@ -131,7 +131,7 @@ test_class_mainetMain:
   variables:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
-test_erreur:
+test_erreur_2:
   stage: test_analyse
   script:
     - pytest ./code/test_syntaxique.py::test_erreur --timeout=180 --forked --junitxml=resultat.xml
@@ -145,7 +145,7 @@ test_erreur:
 test_fichierpoo:
   stage: test_analyse
   script:
-    - pytest ./code/test_syntaxique.py::test_fichierpoo --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_syntaxique.py::test_POO --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -153,10 +153,10 @@ test_fichierpoo:
   variables:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
-test_multiplesclass_extends:
+test_plusieurs_class_avant_Main:
   stage: test_analyse
   script:
-    - pytest ./code/test_syntaxique.py::test_multiplesclass_extends --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_syntaxique.py::test_plusieurs_class_avant_Main --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -164,10 +164,10 @@ test_multiplesclass_extends:
   variables:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
-test_if_else:
+test_operations:
   stage: test_analyse
   script:
-    - pytest ./code/test_syntaxique.py::test_if_else --timeout=180 --forked --junitxml=resultat.xml
+    - pytest ./code/test_syntaxique.py::test_operations --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
     reports:
       junit: [./resultat.xml]
@@ -175,6 +175,60 @@ test_if_else:
   variables:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
+test_accolade:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_accolade --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_egal:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_egal --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+  
+test_crochet:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_crochet --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_parenthese_if:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_parenthese_if --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_addition:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_addition --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
 #clean-job:
 #  - stage: clean
 #  - script:
