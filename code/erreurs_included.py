@@ -34,6 +34,7 @@ class Parseur():
     def erreur(self, token_attendu, ligne):
         self.nb_erreurs += 1
         self.correct = False
+        print("Erreur :", token_attendu,  "est attendu ligne ", ligne)
 
     def verif_file(self):
         class_l = self.verif_classes()
