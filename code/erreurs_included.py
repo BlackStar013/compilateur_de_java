@@ -31,22 +31,17 @@ class Parseur():
 
         return self.token
 
-    #################################
     def erreur(self, token_attendu, ligne):
         self.nb_erreurs += 1
         self.correct = False
-        #print("Erreur :", token_attendu,  "est attendu ligne", ligne)
 
     def verif_file(self):
-        #print("passage verif_file")
-        # print(self.token)
         class_l = self.verif_classes()
         main = self.verif_class_Main()
         return File(main, class_l)
 
 
     def verif_classes(self): #boucle while tant qu'on a un class
-        #print("passage verif_classes")
         var = True
         n = self.nb_erreurs
         class_l = []
@@ -61,12 +56,11 @@ class Parseur():
                 class_l.append(cl)
         self.pos = i
         self.nb_erreurs = n
-        # retroune les classes trouvées
+        # retourne les classes trouvées
         return class_l
 
 
     def verif_class(self):
-        #print("passage verif_class")
         token = self.lire()
         if token[0] != "class":
             self.erreur("class", token[2])
@@ -97,7 +91,6 @@ class Parseur():
         return Class(nom_class, declB, ext)
 
     def verif_decl(self):
-        #print("passage verif_decl")
         token = self.lire()
         match token[0], token[1]:
             case("void",_):
@@ -175,11 +168,9 @@ class Parseur():
             case _:
                 self.correct = False
                 self.nb_erreurs += 1
-                # self.erreur("decl", token[2])
                 return 
 
     def verif_decles(self):
-        #print("passage verif_decles")
         var = True
         n = self.nb_erreurs
         decl_l = []
@@ -198,7 +189,6 @@ class Parseur():
 
 
     def verif_decl_suffix(self):
-        #print("passage verif_decl_suffix")
         token = self.lire()
         match token[0]:
             case ";":
@@ -228,10 +218,8 @@ class Parseur():
                 self.erreur("; ou (", token[2])
         return None, None, None
 
-    #prime devient bis
 
     def verif_decl_ident(self):
-        #print("passage verif_decl_ident")
         token = self.lire()
         if(token[1] == "ident"):
             nom = token[0]
@@ -266,7 +254,6 @@ class Parseur():
             return None, None, None, None
 
     def verif_params(self):
-        #print("passage verif_params")
         type_param = self.verif_type()
         token = self.lire()
         if(token[1] != "ident"):
@@ -279,7 +266,6 @@ class Parseur():
         return [noeud_param] + suite_param
 
     def verif_params_bis(self):
-        #print("passage verif_params_bis")
         param_l = []
         token = self.lire()
         if(token[0] == ","):
@@ -290,7 +276,6 @@ class Parseur():
         return param_l
 
     def verif_type(self):
-        #print("passage verif_type")
         token = self.lire()
 
         if(token[0] == "boolean" or token[0] == "int" or token[1] == "ident"):
@@ -300,7 +285,6 @@ class Parseur():
         return 
 
     def verif_class_Main(self):
-        #print("passage verif_class_Main")
         token = self.lire()
         if(token[0] != "class"):
             self.erreur("class", token[2])
@@ -368,12 +352,10 @@ class Parseur():
 
 
     def verif_expr(self) :
-        #print("passage verif_expr")
         gauche = self.verif_expr_N2()
         return self.verif_expr_N1_bis(gauche)
     
     def verif_expr_N1_bis(self, g) :
-        #print("passage verif_expr_N1_bis")
         token = self.lire()
         if token[0] != '=' :
             self.reculer(1)
@@ -382,12 +364,10 @@ class Parseur():
         return Attribution(g, d)
         
     def verif_expr_N2(self) :
-        #print("passage verif_expr_N2")
         g = self.verif_expr_N3()
         return self.verif_expr_N2_bis(g)
     
     def verif_expr_N2_bis(self, g) :
-        #print("passage verif_expr_N2_bis")
         token = self.lire()
         op = token[0]
         if op == '||' :
@@ -399,12 +379,10 @@ class Parseur():
             return g
         
     def verif_expr_N3(self) :
-        #print("passage verif_expr_N3")
         g = self.verif_expr_N4()
         return self.verif_expr_N3_bis(g) 
     
     def verif_expr_N3_bis(self, g) :
-        #print("passage verif_expr_N3_bis")
         token = self.lire()
         op = token[0]
         if op == '&&' :
@@ -416,12 +394,10 @@ class Parseur():
             return g
         
     def verif_expr_N4(self) :
-        #print("passage verif_expr_N4")
         g = self.verif_expr_N5()
         return self.verif_expr_N4_bis(g)
     
     def verif_expr_N4_bis(self, g) :
-        #print("passage verif_expr_N4_bis")
         token = self.lire()
         op = token[0]
         match op :
@@ -434,12 +410,10 @@ class Parseur():
                 return g
             
     def verif_expr_N5(self) :
-        #print("passage verif_expr_N5")
         g = self.verif_expr_N6()
         return self.verif_expr_N5_bis(g)
     
     def verif_expr_N5_bis(self, g) :
-        #print("passage verif_expr_N5_bis")
         token = self.lire()
         op = token[0]
         match op :
@@ -456,12 +430,10 @@ class Parseur():
                 return g 
             
     def verif_expr_N6(self) :
-        #print("passage verif_expr_N6")
         g = self.verif_expr_N7()
         return self.verif_expr_N6_bis(g)
     
     def verif_expr_N6_bis(self, g) :
-        #print("passage verif_expr_N6_bis")
         token = self.lire()
         op = token[0]
         match op :
@@ -474,12 +446,10 @@ class Parseur():
                 return g
     
     def verif_expr_N7(self) :
-        #print("passage verif_expr_N7")
         g = self.verif_expr_N8()
         return self.verif_expr_N7_bis(g)
     
     def verif_expr_N7_bis(self, g) :
-        #print("passage verif_expr_N7_bis")
         token = self.lire()
         op = token[0]
         match op :
@@ -492,7 +462,6 @@ class Parseur():
                 return g  
             
     def verif_expr_N8(self) :
-        #print("passage verif_expr_N8")
         token = self.lire()
         op = token[0]
         match op :
@@ -506,13 +475,10 @@ class Parseur():
                 return self.verif_expr_N9()
 
     def verif_expr_N9(self) :
-        #print("passage verif_expr_N9")
         g = self.verif_item()
         return self.verif_expr_N9_bis(g) 
 
-###########################################################JEN ETAIS A ICI
     def verif_expr_N9_bis(self, g) :
-        #print("passage verif_expr_N9_bis")
         token = self.lire()
         match token[0] :
             case "." :
@@ -550,7 +516,6 @@ class Parseur():
                 return g
             
     def verif_expr_ident(self) :
-        #print("passage verif_expr_ident")
         token = self.lire()
         n = Element(None, token[0])
         if token[0] == '=' :
@@ -561,9 +526,8 @@ class Parseur():
             expr = self.verif_expr_N9_bis(n)
             return expr
     
-    ############################################################ je reprends a partir de la
+
     def verif_item(self) :
-        #print("passage verif_item")
         token = self.lire()
         ret_type = " "
         match token[0], token[1] :
@@ -603,11 +567,8 @@ class Parseur():
                 ret_type = None
         return Element(ret_type,token[0])
     
-    ################################################################"" Arreter ici pour Moi (à savoir moi), à finir
     
-   # def verif_expr_parenthese(self) :  cas à compléter 2
-    def verif_expr_parenthese(self) : 
-        #print("passage verif_parenthese")
+    def verif_expr_parenthese(self) :
         save_pos = self.pos
         token = self.lire()
         maybe_type = False
@@ -636,7 +597,6 @@ class Parseur():
 
         
     def verif_expr_bis(self) :
-        #print("passage verif_expr_bis")
         self.verif_expr_N9_bis()
         self.verif_expr_N7_bis()
         self.verif_expr_N6_bis()
@@ -649,13 +609,11 @@ class Parseur():
 
 
     def verif_lexpr(self):
-        #print("passage verif_lexpr")
         exp = self.verif_expr()
         suite = self.verif_lexpr_bis()
         return [exp] + suite
 
     def verif_lexpr_bis(self):
-        #print("passage verif_lexpr_bis")
         token = self.lire()
         if token[0] == ",":
             return self.verif_lexpr()
@@ -664,7 +622,6 @@ class Parseur():
             return []
         
     def verif_stmt(self):
-        #print("passage verif_stmt")
         token = self.lire()
         match token[0], token[1]:
             case ";", _ : 
@@ -749,7 +706,6 @@ class Parseur():
             
             case _,"integer" | "mot":
                 pass
-            #######################ON POURRAIT LES REGROUPER AVEC UN TRUC EN MODE {token[1]}
             case "true" | "false" | "this" | "null" ,_:
                 pass
             case "new", _:
@@ -791,13 +747,12 @@ class Parseur():
 
 
     def verif_stmtes(self):
-        #print("passage verif_stmtes")
         var = True
         n = self.nb_erreurs
         stmt_l = []
         while var:
             actuel = self.correct
-            i = self.pos ####################### N EST LA VARIABLE GLOBALE? FAUDRA VERIFIER QUE C'EST BIEN çA BREF
+            i = self.pos
             stmt = self.verif_stmt()
             if(n != self.nb_erreurs):
                 var = False
@@ -809,7 +764,6 @@ class Parseur():
         return StmtBlock(stmt_l)
 
     def verif_stmt_type(self):
-        #print("passage verif_stmt_type")
         token = self.lire()
         match token[0]:
             case ";":
@@ -822,11 +776,9 @@ class Parseur():
                 return "Init", expr
         self.correct = False
         self.nb_erreurs += 1
-        # self.erreur("statement type", token[2])
         return
 
     def verif_stmt_if(self):
-        #print("passage verif_if")
         token = self.lire()
         if(token[0] == "else"):
             stmt = self.verif_stmt()
@@ -836,7 +788,6 @@ class Parseur():
             return Node("_")
     '''    
     def verif_stmt_ident(self):
-        #print("passage verif_stmt_ident")
         token = self.lire()
         match token[1]:
             case "ident":
