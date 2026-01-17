@@ -9,24 +9,24 @@ def test_class_Main():
     parseur = Parseur(lexeur(fichier))
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test1")
+    # viz = initialisation(verif)
+    # show(viz, "test1")
 
 def test_class_mainetMain():
     fichier = "./fichier_test_jura/test2.txt"
     parseur = Parseur(lexeur(fichier))
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test2")
+    # viz = initialisation(verif)
+    # show(viz, "test2")
 
 def test_erreur():
     fichier = "./fichier_test_jura/test3.txt"
     parseur = Parseur(lexeur(fichier))
     verif = parseur.verif_file()
     assert(parseur.correct == False)
-    viz = initialisation(verif)
-    show(viz, "test3")
+    # viz = initialisation(verif)
+    # show(viz, "test3")
 
 def test_POO():
     fichier = "./fichier_test_jura/test4.txt" #test de this + parenthèses + if + commentaires + plus fonctions avant main...
@@ -34,8 +34,8 @@ def test_POO():
     parseur = Parseur(lex)
     verif = verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test4")
+    # viz = initialisation(verif)
+    # show(viz, "test4")
 
 
 def test_plusieurs_class_avant_Main():
@@ -44,8 +44,8 @@ def test_plusieurs_class_avant_Main():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test5")
+    # viz = initialisation(verif)
+    # show(viz, "test5")
 
 def test_operations():
     fichier = "./fichier_test_jura/test6.txt"
@@ -53,8 +53,8 @@ def test_operations():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test6")
+    # viz = initialisation(verif)
+    # show(viz, "test6")
 
 def test_accolade():
     fichier = "./fichier_test_jura/test7.txt"
@@ -62,8 +62,8 @@ def test_accolade():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test7")
+    # viz = initialisation(verif)
+    # show(viz, "test7")
 
 def test_egal():
     fichier = "./fichier_test_jura/test8.txt"
@@ -71,8 +71,8 @@ def test_egal():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == False)
-    viz = initialisation(verif)
-    show(viz, "test8")
+    # viz = initialisation(verif)
+    # show(viz, "test8")
 
 def test_crochet():
     fichier = "./fichier_test_jura/test9.txt"
@@ -80,8 +80,8 @@ def test_crochet():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == False)
-    viz = initialisation(verif)
-    show(viz, "test9")
+    # viz = initialisation(verif)
+    # show(viz, "test9")
 
 def test_parenthese_if():
     fichier = "./fichier_test_jura/test10.txt"
@@ -89,8 +89,8 @@ def test_parenthese_if():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == False)
-    viz = initialisation(verif)
-    show(viz, "test10")
+    # viz = initialisation(verif)
+    # show(viz, "test10")
 
 def test_addition():
     fichier = "./fichier_test_jura/test11.txt"
@@ -98,8 +98,8 @@ def test_addition():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test11")   
+    # viz = initialisation(verif)
+    # show(viz, "test11")   
 
 def test_12():
     fichier = "./fichier_test_jura/test12.txt"
@@ -107,8 +107,8 @@ def test_12():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test12")
+    # viz = initialisation(verif)
+    # show(viz, "test12")
 
 def test_13():
     fichier = "./fichier_test_jura/test13.txt"
@@ -116,8 +116,8 @@ def test_13():
     parseur = Parseur(lex)
     verif = parseur.verif_file()
     assert(parseur.correct == True)
-    viz = initialisation(verif)
-    show(viz, "test13")
+    # viz = initialisation(verif)
+    # show(viz, "test13")
 
 if __name__ == "__main__":
     test_class_Main() #1
