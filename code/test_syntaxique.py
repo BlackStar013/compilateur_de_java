@@ -110,6 +110,14 @@ def test_12():
     viz = initialisation(verif)
     show(viz, "test12")
 
+def test_13():
+    fichier = "./fichier_test_jura/test13.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    verif = parseur.verif_file()
+    assert(parseur.correct == True)
+    viz = initialisation(verif)
+    show(viz, "test13")
 
 if __name__ == "__main__":
     test_class_Main() #1
@@ -124,4 +132,5 @@ if __name__ == "__main__":
     test_parenthese_if()#10
     test_addition()#11
     test_12()#12
+    test_13()#13
     print("les tests sont passés\n")
