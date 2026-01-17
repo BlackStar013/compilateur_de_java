@@ -1,6 +1,6 @@
 from lexeur import *
 from erreurs_included import *
-from dessiner import *
+#from dessiner import *
 print("\nlancement des tests")
 
 
