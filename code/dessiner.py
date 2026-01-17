@@ -38,7 +38,7 @@ def ajout_arete(arbre:Digraph, node:Node):
             
 
 def show(arbre:Digraph, filename:str):
-    arbre.render(filename, view=True, format='png')
+    arbre.render(filename, view=False, format='png')
 
 if __name__ == "__main__":
     # 1. Création des instructions du corps de la méthode

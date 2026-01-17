@@ -1,0 +1,23 @@
+class Nancy {
+    int latitude;
+    int longitude;
+    int population;
+}
+
+class Telecom extends Nancy {
+    int calcul_eleve_annee(int annee) {
+        this.population = 150;
+        if (annee < 2020) {
+            return -annee + 2000 + this.population * 2;
+        } else {
+            return this.population * 2 + annee - 2000;
+        }
+    }
+}
+
+class Main {
+    public static void main(String Compil[]) {
+        Telecom tn = new Telecom();
+        int eleves = tn.calcul_eleve_annee(2013);
+    }
+}
