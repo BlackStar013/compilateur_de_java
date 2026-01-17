@@ -3,7 +3,8 @@ image: gibson-registry.telecomnancy.univ-lorraine.fr/projets/2526/pcl/projet/fis
 stages:
   - build-image
   - build
-  - test
+  - test_lexeur
+  - test_analyse
   - clean
 
 build-image-job:
@@ -30,7 +31,7 @@ build-image-job:
 #    - echo ""bonjour""
 
 test_operation:
-  stage: test
+  stage: test_lexeur
   script:
     - pytest ./code/test_lexeur.py::test_operation --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
@@ -41,7 +42,7 @@ test_operation:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
 test_operateur:
-  stage: test
+  stage: test_lexeur
   script:
     - pytest ./code/test_lexeur.py::test_operateur --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
@@ -52,7 +53,7 @@ test_operateur:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
 test_string:
-  stage: test
+  stage: test_lexeur
   script:
     - pytest ./code/test_lexeur.py::test_string --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
@@ -63,7 +64,7 @@ test_string:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
 test_motsclef:
-  stage: test
+  stage: test_lexeur
   script:
     - pytest ./code/test_lexeur.py::test_motsclef --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
@@ -74,7 +75,7 @@ test_motsclef:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
 test_idvsmotclef:
-  stage: test
+  stage: test_lexeur
   script:
     - pytest ./code/test_lexeur.py::test_idvsmotclef --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
@@ -85,7 +86,7 @@ test_idvsmotclef:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
 test_symboles:
-  stage: test
+  stage: test_lexeur
   script:
     - pytest ./code/test_lexeur.py::test_symboles --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
@@ -96,7 +97,7 @@ test_symboles:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
 test_erreur:
-  stage: test
+  stage: test_lexeur
   script:
     - pytest ./code/test_lexeur.py::test_erreur --timeout=180 --forked --junitxml=resultat.xml
   artifacts:
@@ -106,6 +107,73 @@ test_erreur:
   variables:
     RUNNER_SCRIPT_TIMEOUT: 3m
 
+
+
+test_class_Main:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_class_Main --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_class_mainetMain:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_class_mainetMain --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_erreur:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_erreur --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_fichierpoo:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_fichierpoo --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_multiplesclass_extends:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_multiplesclass_extends --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
+
+test_if_else:
+  stage: test_analyse
+  script:
+    - pytest ./code/test_syntaxique.py::test_if_else --timeout=180 --forked --junitxml=resultat.xml
+  artifacts:
+    reports:
+      junit: [./resultat.xml]
+  timeout: 4m
+  variables:
+    RUNNER_SCRIPT_TIMEOUT: 3m
 
 #clean-job:
 #  - stage: clean
