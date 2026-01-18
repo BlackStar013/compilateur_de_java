@@ -1,6 +1,6 @@
 from lexeur import *
 from erreurs_included import *
-#from dessiner import *
+from dessiner import *
 print("\nlancement des tests")
 
 
@@ -118,6 +118,24 @@ def test_13():
     assert(parseur.correct == True)
     # viz = initialisation(verif)
     # show(viz, "test13")
+
+def test_14():
+    fichier = "./fichier_test_jura/test14.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    verif = parseur.verif_file()
+    assert(parseur.correct == True)
+    viz = initialisation(verif)
+    show(viz, "test14")
+
+def test_15():
+    fichier = "./fichier_test_jura/test15.txt"
+    lex = lexeur(fichier)
+    parseur = Parseur(lex)
+    verif = parseur.verif_file()
+    assert(parseur.correct == False)
+    viz = initialisation(verif)
+    show(viz, "test15")
 
 if __name__ == "__main__":
     test_class_Main() #1

@@ -1,0 +1,23 @@
+class Main {
+    public static void main(String chat[]){
+        int a;
+        for (a = 0; a < 85; a = a + 1) {
+            int b = 5;
+        }
+        for (;;) {
+            int b = 5;
+        }
+        for (a = 5; ;) {
+            int b = 5;
+        }
+        for (; ;) {
+            ;
+        }
+        for (; ;);
+        for (; ;) {
+            for (; ;) {
+            ;
+            }
+        }
+    }
+}
